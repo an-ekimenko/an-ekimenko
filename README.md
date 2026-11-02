@@ -27,21 +27,23 @@ Experienced Software Engineer specializing in building highly resilient, low-lat
 
 ## 📂 Highlighted Enterprise Projects
 
-### 🔒 [CryptoCertLoader](https://github.com/an-ekimenko/CryptoCertLoader)
+### 🔒 [CryptoCertLoader](https://github.com)
 A lightweight, standalone shared utility library designed to eliminate application downtime caused by upstream SSL certificate rotations. It programmatically intercepts remote TLS certificate chains, dynamically synchronizes local JVM trust stores, and hot-swaps execution contexts in-memory without requiring application restarts.
 
-### ⛽ [Jck_GSPassportization](https://github.com/an-ekimenko/Jck_GSPassportization)
+### 📄 [Jck_GSPassportization](https://github.com)
 A fault-tolerant ETL integration agent that extracts and processes gas station attributes from a remote web service into an MS SQL staging environment (PSA) for subsequent SAP BW/4HANA ingestion. Features in-memory data stream deduplication and an adaptive exponential backoff network retry engine.
 
-### 🛠 [Jackson_RepairRequests](https://github.com/an-ekimenko/Jackson_RepairRequests)
+### 🔗 [Jackson_RepairRequests](https://github.com)
 A resilient data synchronization module designed to extract equipment maintenance requests from ERP systems into analytical staging layers. Successfully solves complex infrastructure constraints such as proxying through Anonymous IIS servers via preemptive request-scoped header injections and navigating deprecated authority URL security profiles.
 
-### 📊 [StrukSummaryOfAnalytics](https://github.com/an-ekimenko/StrukSummaryOfAnalytics)
+### 📊 [StrukSummaryOfAnalytics](https://github.com)
 A CLI utility that automates high-volume document ingestion from cloud repositories to enterprise shared network storage. Leverages formula-driven connection throttling for large file optimization and delivers decoupled observability footprints via runtime metadata state serialization.
 
-### 📊 [PlannedFuelKPI](https://github.com/an-ekimenko/PlannedFuelKPI.git)(#)
-
+### 📈 [PlannedFuelKPI(#)](https://github.com)
 A high-performance, resilient ETL integration agent designed to extract targeted retail performance metrics from distributed corporate spreadsheets into normalized analytics layers for subsequent SAP BW ingestion. Fully decouples stateful processing vectors to resolve complex infrastructure constraints, featuring lock-free concurrent shared-stream reading and an adaptive exponential backoff network retry engine.
+
+### ⛽ [FuelSurchargesCalculation](https://github.com)
+A robust, highly decoupled enterprise ETL utility that automates the extraction of dynamic fuel surcharge calculation matrices from legacy Excel workbooks (`.xls`) over corporate UNC networks. Built upon strict **Separation of Concerns (SoC)** and **Single Responsibility (SRP)** principles, it utilizes an anti-deadlock synchronized bootstrap layer, native NIO UTF-8 character protection, and a fault-tolerant exponential backoff loop to completely bypass concurrent file-handling infrastructure bottlenecks during downstream SAP BW loads.
 
 ---
 
