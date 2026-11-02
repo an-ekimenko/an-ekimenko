@@ -37,9 +37,9 @@ A fault-tolerant ETL integration agent that extracts and processes gas station a
 A resilient data synchronization module designed to extract equipment maintenance requests from ERP systems into analytical staging layers. Successfully solves complex infrastructure constraints such as proxying through Anonymous IIS servers via preemptive request-scoped header injections and navigating deprecated authority URL security profiles.
 
 ### 📊 [StrukSummaryOfAnalytics](https://github.com/an-ekimenko/StrukSummaryOfAnalytics)
-An execution-path-independent CLI analytics utility that automates high-volume document ingestion from cloud repositories to enterprise shared network storage. Leverages formula-driven connection throttling for large file optimization and delivers decoupled observability footprints via runtime metadata state serialization.
+A CLI utility that automates high-volume document ingestion from cloud repositories to enterprise shared network storage. Leverages formula-driven connection throttling for large file optimization and delivers decoupled observability footprints via runtime metadata state serialization.
 
-### 📊 [PlannedFuelKPI]()(#)
+### 📊 [PlannedFuelKPI](https://github.com/an-ekimenko/PlannedFuelKPI.git)(#)
 
 A high-performance, resilient ETL integration agent designed to extract targeted retail performance metrics from distributed corporate spreadsheets into normalized analytics layers for subsequent SAP BW ingestion. Fully decouples stateful processing vectors to resolve complex infrastructure constraints, featuring lock-free concurrent shared-stream reading and an adaptive exponential backoff network retry engine.
 
