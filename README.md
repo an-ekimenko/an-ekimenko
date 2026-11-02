@@ -53,5 +53,5 @@ All ecosystem modules are engineered adhering to a **Centralized Shared-Dependen
 
 ## ✉️ Contact & Collaboration
 
-*   **Email:** [your-corporate-email@domain.com]
+*   **Email:** [a.ekimenko@beloil.by]
 *   **LinkedIn / Telegram:** [Your Contact Handler]
