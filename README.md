@@ -1,4 +1,4 @@
-# A.Ekimenko
+# Alex Ekimenko
 ### Solutions Architect | Systems & Integration Architect
 **High-performance integration architectures, data pipeline solutions, and infrastructure decoupling.**
 
