@@ -1,57 +1,102 @@
 # A.Ekimenko
-**Senior Backend / Integration Engineer**
-
-Experienced Software Engineer specializing in building highly resilient, low-latency ETL pipelines, robust network transport layers, and automated data synchronization solutions for corporate enterprise environments.
-
----
-
-## 🚀 Core Competencies & Architecture Focus
-
-*   **Enterprise Integration (ETL):** Designing stateless, high-throughput data extraction and transformation pipelines mapping unstable upstream API payloads into structured database environments.
-*   **Infrastructure Fault-Tolerance:** Implementing dynamic network recovery strategies including adaptive exponential backoff policies, request-scoped preemptive authentication modules, and auto-healing connection pools.
-*   **Automated Security & Cryptography:** Developing programmatic, memory-resident SSL/TLS handshake interceptors and runtime keystore extension utilities to bypass infrastructure downtime caused by certificate rotations.
-*   **Clean Architecture Standards:** Promoting loose coupling across network, serialization, and persistence layers via dependency injection containers, type-safe data transfer objects, and automated quality assurance matrices.
+### Solutions Architect | Systems & Integration Architect
+**High-performance integration architectures, data pipeline solutions, and infrastructure decoupling.**
 
 ---
 
-## 🛠 Strategic Technical Stack
+## 🔭 Executive Profile
 
-*   **Languages & Core:** Java (Functional Streams, Concurrency, Reflection API, Protection Domain security mechanics).
-*   **Dependency Injection & Lifecycle:** Component lifecycle management containers, declarative provider systems.
-*   **Data Parsing & Serialization:** Advanced tree-node JSON deserialization engines, YAML/Properties environment loaders, specialized spreadsheet processing utilities.
-*   **Object-Relational Mapping (OR/M):** Transaction-aware persistence layers, performance-optimized batch operations (`merge`, `flush`, `clear`), isolated SQL profiling and execution telemetry.
-*   **Networking & Security:** High-concurrency HTTP client managers, dynamic TLS certificate hot-swappers, custom Base64/JWT token authorization bridges.
-*   **Quality Assurance:** Parameterized unit test suites, behavioral test doubles, dynamic assertion models.
+Architect and Solutions Engineer with a proven track record of designing high-availability, fault-tolerant, and decoupled data integration pipelines for enterprise ecosystems (including **SAP BW/4HANA**, **1C:TOiR**, and corporate analytical buses). 
+
+Expert in transforming monolith tech debt into highly resilient, distributed micro-utilities, robust network transport subsystems, and stateful processing engines. Specialized in designing pre-flight cryptographic automation, high-performance HTTP connection management, and low-footprint batch persistence layers that safeguard critical accounting ledgers against network and operating system locking bottlenecks.
+
+* **Core Architectures:** Decoupled Service Topologies, Separation of Concerns (SoC), Stateful Stream Extraction, In-Memory Ledger Aggregation, Shared Dependency Environments.
+* **Core Competencies:** Defensive Ingestion Design, Resilient Network Subsystems (Preemptive Auth/Exponential Backoff), Zero-Loss High-Precision Computations, JVM Hot-Swapping Systems, Test-Driven Quality Control.
+* **Tech Baseline:** Java Enterprise, Google Guice (DI), Apache HttpClient 5, Hibernate, Apache POI/Spire.XLS, Jackson (JSON/YAML), JUnit 5, Mockito, Log4j2/SLF4J, P6Spy.
+
+---
+## 🏗 Selected Enterprise Architectural Solutions
+
+### 1. Decoupled KPI & Surcharge Analytical Ingestion Pipeline
+*Target Systems: SAP BW Data Bus | Corporate Data Warehouses*
+* **Architectural Challenge & Solution:** Replaced a tightly coupled legacy monolith class with a modular pipeline designed around strict **Separation of Concerns (SoC)** and **Single Responsibility Principles (SRP)**. By isolating initialization, file streaming, cell-parsing, and serialization into distinct components, the system shields downstream analytical platforms from evolving spreadsheet structures.
+* **Solutions & Decoupling Highlights:**
+  * **Stateful Tracking Pattern:** Implemented dynamic state-aware processing to resolve vertical merged cell vectors (where native evaluations return `BLANK` properties outside the top-left coordinate origin), maintaining the context of parent metrics during row-by-row traversal without heavy in-memory multi-pass caching.
+  * **Loose Coupling via Abstraction:** Utilized Factory-like dynamic binary signature analysis to completely decouple low-level components from concrete spreadsheet classes. The initialization layer remains completely unchanged even if future library updates introduce new file extensions, while successfully neutralizing manual human-error (improperly renamed files).
+  * **Zero-Loss Precision Control:** Enforced arithmetic ledger stability with programmatic ceiling rules, preventing scientific exponential notations and multi-million rounding drift.
+
+### 2. High-Concurrency Automated Staging Area (PSA) Subsystem
+*Target Systems: MS SQL Server | Enterprise Web Services | SAP BW/4HANA*
+* **Architectural Challenge & Solution:** Designed a high-throughput, asynchronous ingestion framework to extract volatile gas station master data and complex hardware asset telemetry into an intermediate persistent staging environment. The system utilizes a clean **Dependency Injection (DI)** architecture to eliminate global singletons and implicit lifecycle bottlenecks.
+* **Solutions & Decoupling Highlights:**
+  * **Google Guice 7 DI Container:** Centrally manages component life-cycles, promoting absolute compile-time loose coupling across the network, serialization, and persistence layers via type-safe constructor and provider-based injections.
+  * **Defensive JSON Deserialization:** Authored a production-grade fault-tolerant deserializer that encapsulates data-cleansing strategies, seamlessly normalizing missing or null elements into safe primitive structures and resolving corrupted alphanumeric identifiers via pre-compiled regex without throwing validation crashes.
+  * **Stream-Based Deduplication & Bulk Persistence:** Leverages functional Java Streams to decouple transient Data Transfer Objects (DTOs) from persistent Hibernate entities. Integrates stateful filtering to eliminate duplicated business keys in-memory before executing transaction-aware bulk database flushes, striking an optimal balance between memory constraints and RDBMS round-trip latencies.
+
+### 3. Preemptive Security & Network Resiliency Layer for Legacy Gateways
+*Target Systems: Microsoft IIS 10.0 Proxy | 1C:TOiR Web Services*
+* **Architectural Challenge & Solution:** Architected an isolated network integration agent designed to interface modern HTTP clients with strict, misconfigured enterprise network perimeters, bypassing firewall-induced session drops and connection drops before encryption completes.
+* **Solutions & Decoupling Highlights:**
+  * **Preemptive Authentication Protocol:** Integrated an optimized **Apache HttpClient 5** core backed by a managed thread-safe connection pool. Overcame proxy drops caused by anonymous IIS structures by forcing the transport layer to inject custom request-scoped authorization frames (Basic/Bearer) directly inside the initial outbound socket transmission, skipping standard challenge handshakes.
+  * **State-Aware Lazy Initialization:** Defers network client instantiation until the explicit runtime execution window. This constraint guarantees that the underlying SSLContext is established only after the local trust store has been verified against the latest remote certificates, preventing transport layers from locking onto stale TLS boundaries.
+  * **Adaptive Exponential Backoff Retry Strategy:** Embeds a custom retry strategy to survive prolonged network disruptions. Instead of arbitrary counters, recovery attempts scale progressively using an exponential progression formula, preventing scheduling cascading failures.
+
+### 4. Dynamic Cryptographic SSL/TLS Trust Store Hot-Swapping System
+*Target Systems: JVM Security Infrastructure | Distributed Integration Apps*
+* **Architectural Challenge & Solution:** Designed a zero-dependency, pluggable shared-library component automating SSL certificate verification and trust boundaries across neighboring operational modules. It enables enterprise client applications to survive upstream corporate certificate rotations with zero service downtime.
+* **Solutions & Decoupling Highlights:**
+  * **In-Memory SSLContext Hot-Swapping:** Programmatically intercepts remote certificate chains atomically during secure TLS handshakes using low-overhead discarding body handlers. It updates the physical trust store (cacerts) and dynamically injects the modified SSLContext into active JVM memory on-the-fly, allowing active network clients to leverage fresh certificates instantly without requiring application restarts.
+  * **Validity & Unique Metadata Mapping:** Generates deterministic unique aliases based on X500Principal signatures and automatically replaces local certificates failing validation checks, keeping the trust store clean.
+  * **Proactive Backup & Rollback Pipeline:** Implements transactional atomicity for filesystem writes. Generates automated, timestamped backups of the master cacerts file before committing updates, triggering immediate rollback sequences upon detecting I/O faults to protect JVM security integrity.
 
 ---
 
-## 📂 Highlighted Enterprise Projects
+## 📦 Global Artifact Deployment Topology
 
-### 🔒 [CryptoCertLoader](https://github.com/an-ekimenko/CryptoCertLoader.git)
-A lightweight, standalone shared utility library designed to eliminate application downtime caused by upstream SSL certificate rotations. It programmatically intercepts remote TLS certificate chains, dynamically synchronizes local JVM trust stores, and hot-swaps execution contexts in-memory without requiring application restarts.
+To maximize resource efficiency and maintain a low memory footprint across the infrastructure, all solutions adopt a **Decoupled Shared-Dependency Model**:
 
-### 📄 [Jck_GSPassportization](https://github.com/an-ekimenko/Jck_GSPassportization.git)
-A fault-tolerant ETL integration agent that extracts and processes gas station attributes from a remote web service into an MS SQL staging environment (PSA) for subsequent SAP BW/4HANA ingestion. Features in-memory data stream deduplication and an adaptive exponential backoff network retry engine.
+```text
+shared-environment-root/
+├── dependencies/
+├── CryptoCertLoader/
+├── Jck_GSPassportization/
+├── Jackson_RepairRequests/
+├── FuelSurchargesCalculation/
+├── AdditionalBonus/
+└── PlannedFuelKPI/
+```
 
-### 🔗 [Jackson_RepairRequests](https://github.com/an-ekimenko/Jackson_RepairRequests.git)
-A resilient data synchronization module designed to extract equipment maintenance requests from ERP systems into analytical staging layers. Successfully solves complex infrastructure constraints such as proxying through Anonymous IIS servers via preemptive request-scoped header injections and navigating deprecated authority URL security profiles.
+### Operational Component Matrix
 
-### 📊 [AdditionalBonus](https://github.com/an-ekimenko/AdditionalBonus.git)
-A CLI utility that automates high-volume document ingestion from cloud repositories to enterprise shared network storage. Leverages formula-driven connection throttling for large file optimization and delivers decoupled observability footprints via runtime metadata state serialization.
-
-### 📈 [PlannedFuelKPI](https://github.com/an-ekimenko/PlannedFuelKPI.git)
-A high-performance, resilient ETL integration agent designed to extract targeted retail performance metrics from distributed corporate spreadsheets into normalized analytics layers for subsequent SAP BW ingestion. Fully decouples stateful processing vectors to resolve complex infrastructure constraints, featuring lock-free concurrent shared-stream reading and an adaptive exponential backoff network retry engine.
-
-### ⛽ [FuelSurchargesCalculation](https://github.com/an-ekimenko/FuelSurchargesCalculation.git)
-A robust, highly decoupled enterprise ETL utility that automates the extraction of dynamic fuel surcharge calculation matrices from legacy Excel workbooks (`.xls`) over corporate UNC networks. Built upon strict 
-
-**Separation of Concerns (SoC)** and **Single Responsibility (SRP)** principles, it utilizes an anti-deadlock synchronized bootstrap layer, native NIO UTF-8 character protection, and a fault-tolerant exponential backoff loop to completely bypass concurrent file-handling infrastructure bottlenecks during downstream SAP BW loads.
+* **`dependencies/`** — Centralized shareable library pool (POI, Log4j2, Guice, etc.) designed to enforce strict infrastructure decoupling, optimizing memory and disk footprint across the ecosystem.
+* **`CryptoCertLoader/`** — Programmatic TLS Handshake Interceptor Shared Library.
+* **`Jck_GSPassportization/`** — High-Performance Gas Station Asset Staging Engine: a fault-tolerant ETL utility built on Google Guice Dependency Injection (DI) for total layer decoupling. It guarantees fault-free API responses via an adaptive network retry loop and implements stream-based deduplication alongside defensive deserialization to safely ingest malformed, user-input text and primitive data types.
+* **`Jackson_RepairRequests/`** — Resilient Preemptive Auth 1C:TOiR Data Ingestor: a standalone synchronization module enforcing complete Separation of Concerns (SoC). It handles complex proxy-level constraints via decoupled request-scoped header injections and isolates deprecated security profiles, ensuring maximum ingestion fault-tolerance.
+* **`FuelSurchargesCalculation/`** — Zero-Loss Accounting Metric Aggregator: a highly decoupled enterprise ETL engine designed around strict single-responsibility principles. It features an anti-deadlock synchronized bootstrap layer, native NIO character layer protection, and a fault-tolerant exponential backoff loop to completely bypass file-handling bottlenecks and operating system locks during downstream SAP BW loads.
+* **`AdditionalBonus/`** — Cloud Excel Transformation Utility: an isolated pipeline that guarantees resource leak prevention and auto-cleanup by leveraging formula-driven connection throttling for large file optimization, delivering a fully decoupled footprint observability layer via runtime metadata state serialization.
+* **`PlannedFuelKPI/`** — Resilient ETL Integration Agent: designed around the Separation of Concerns (SoC) paradigm, this utility completely decouples stateful processing vectors to resolve complex infrastructure constraints. It features lock-free concurrent shared-stream reading via InputStream to bypass active operating system file handling locks and handles user-induced format mutations via an automated signature analysis engine.
 
 ---
 
-## 🏗 System Architecture Paradigm
+### Core Architecture & Infrastructure Isolation Contracts
 
-All ecosystem modules are engineered adhering to a **Centralized Shared-Dependency Deployment Model**. External classpaths are completely decoupled from individual application artifacts and managed inside a unified upper-level binary store, drastically minimizing infrastructure disk footprint and stream-lining global dependency maintenance.
+The integration ecosystem is engineered around a unified architectural framework that guarantees strict isolation, runtime resilience, and seamless decoupling across all processing layers:
+
+* **Centralized Shareable Infrastructure (Shared Dependency Pool):** Application archives completely exclude heavy third-party binaries, resolving system-wide framework lifecycle boundaries dynamically via manifest Class-Path hooks. This enforces strict infrastructure decoupling and significantly reduces the system's memory and deployment footprint.
+* **Context-Independent Execution Topology:** Built-in dynamic path resolvers automatically decode code-source location contexts at runtime. This completely eliminates hardcoded absolute system dependencies, allowing identical binaries to operate flawlessly across heterogeneous execution scopes (e.g., local IDE environments, production standalone JARs, or OS schedulers).
+* **Defensive Parsing & Structural Invariant Validation:** Employs customized, fault-tolerant JSON/YAML deserializers and dedicated file-traversal components. This architecture isolates core business logic from volatile source data formats, gracefully normalizing malformed structures, catching data overflows, and protecting workflows against manual user-input anomalies.
+* **Pre-Flight Automated TLS Lifecycle Management:** Integrates pluggable trust-store synchronization components that programmatically evaluate target endpoint validation states. The subsystem automatically updates JVM security baselines and hot-swaps active memory contexts on-the-fly, enabling client routines to survive upstream certificate rotations without downtime.
+* **Lock-Free Concurrent Input Overlapping:** Mitigates host operating system file-descriptor locking bottlenecks (e.g., target sheets concurrently opened by corporate planning staff) by executing shared-read byte stream models. Localized data matrices are isolated near-instantaneously into secure memory heap context boundaries.
+* **Decoupled Architecture, DI, & Universal Separation of Concerns:** Extends strict Single Responsibility Principles across all project blueprints, leveraging type-safe Dependency Injection (DI) frameworks to entirely decouple application lifecycles from static context state blockages. Environmental variables, logging engines, cross-schema authentication pipelines, transport layers, and data mappers are isolated into distinct, specialized entities—ensuring clean boundaries, modular orchestration, and seamless runtime adjustments with zero codebase modification or artifact recompilation.
+
+---
+## 🧪 Enterprise Testing & Verification Frameworks
+
+Architectural designs are verified against rigorous automated quality control criteria utilizing isolated, fast-executing **JUnit 5** and **Mockito** test matrices:
+
+* **Infrastructure Virtualization:** Completely eliminates file system dependencies, IO locks, and network latency friction by simulating OS-level behaviors using temporary disk sandboxes (`@TempDir`) and mocking heavy native vendor ecosystems.
+* **Private Method Isolation:** Leverages Java Reflection API wrappers to run deep functional validations directly on private processing subroutines without polluting clean class interfaces.
+* **Behavioral Verification:** Employs argument captors and static method interception (`Mockito.mockStatic`) to validate the construction of authorization headers and track in-memory business-key deduplication metrics before database writes occur.
 
 ---
 
