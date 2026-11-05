@@ -11,7 +11,7 @@ Architect and Solutions Engineer with a proven track record of designing high-av
 Expert in transforming monolith tech debt into highly resilient, distributed micro-utilities, robust network transport subsystems, and stateful processing engines. Specialized in designing pre-flight cryptographic automation, high-performance HTTP connection management, and low-footprint batch persistence layers that safeguard critical accounting ledgers against network and operating system locking bottlenecks.
 
 * **Core Architectures:** Decoupled Service Topologies, Separation of Concerns (SoC), Stateful Stream Extraction, In-Memory Ledger Aggregation, Shared Dependency Environments.
-* **Core Competencies:** Defensive Ingestion Design, Resilient Network Subsystems (Preemptive Auth/Exponential Backoff), Zero-Loss High-Precision Computations, JVM Hot-Swapping Systems, Test-Driven Quality Control.
+* **Core Competencies:** Defensive Ingestion Design, Resilient Network Subsystems (Preemptive Auth/Formula driven Backoff), Zero-Loss High-Precision Computations, JVM Hot-Swapping Systems, Test-Driven Quality Control.
 * **Tech Baseline:** Java Enterprise, Google Guice (DI), Apache HttpClient 5, Hibernate, Apache POI/Spire.XLS, Jackson (JSON/YAML), JUnit 5, Mockito, Log4j2/SLF4J, P6Spy.
 
 ---
