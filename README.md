@@ -9,7 +9,7 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
 ---
 ## 🏗 Selected Enterprise Architectural Solutions
 
-### 1. Reactive Multi-Module Data Transformation & Ingestion Engine
+### 1. [Reactive Multi-Module Data Transformation & Ingestion Engine](https://github.com/an-ekimenko/DataTransformationRxWorkers)
 
 *Target Systems: MS SQL Server Staging | Oracle Database | SAP BW/4HANA*
 
@@ -21,14 +21,21 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
 
 
 ### 2. Decoupled KPI & Surcharge Analytical Ingestion Pipeline
-*Target Systems: SAP BW Data Bus | Corporate Data Warehouses*
-* **Architectural Challenge & Solution:** Replaced a tightly coupled legacy monolith class with a modular pipeline designed around strict **Separation of Concerns (SoC)** and **Single Responsibility Principles (SRP)**. By isolating initialization, file streaming, cell-parsing, and serialization into distinct components, the system shields downstream analytical platforms from evolving spreadsheet structures.
-* **Solutions & Decoupling Highlights:**
-  * **Stateful Tracking Pattern:** Implemented dynamic state-aware processing to resolve vertical merged cell vectors (where native evaluations return `BLANK` properties outside the top-left coordinate origin), maintaining the context of parent metrics during row-by-row traversal without heavy in-memory multi-pass caching.
-  * **Loose Coupling via Abstraction:** Utilized Factory-like dynamic binary signature analysis to completely decouple low-level components from concrete spreadsheet classes. The initialization layer remains completely unchanged even if future library updates introduce new file extensions, while successfully neutralizing manual human-error (improperly renamed files).
-  * **Zero-Loss Precision Control:** Enforced arithmetic ledger stability with programmatic ceiling rules, preventing scientific exponential notations and multi-million rounding drift.
 
-### 3. High-Concurrency Automated Staging Area (PSA) Subsystem
+*Target Systems: SAP BW Data Bus | Corporate Data Warehouses*
+
+* **Architectural Challenge & Solution:** Replaced a set of tightly coupled legacy monolith classes with a modular ingestion architecture designed around strict **Separation of Concerns (SoC)** and **Single Responsibility Principles (SRP)**. This architectural blueprint is deployed across **two distinct yet structurally aligned extraction utilities** targeting corporate spreadsheets:
+  * **[FuelSurchargesCalculation](https://github.com)** — Specifically engineered to parse critical retail fuel surcharge structures.
+  * **[PlannedFuelKPI](https://github.com)** — Designed to extract complex, volatile multi-layered organizational Key Performance Indicators.
+  
+  By isolating initialization, file streaming, cell-parsing, and serialization into independent components, both systems completely shield downstream analytical platforms from evolving worksheet structures.
+
+* **Solutions & Decoupling Highlights:**
+  * **Stateful Tracking Pattern:** Implemented dynamic state-aware processing to resolve vertical merged cell vectors (where native evaluations drop cell value properties outside the top-left coordinate origin), maintaining the context of parent metrics during row-by-row traversal without heavy in-memory multi-pass caching.
+  * **Loose Coupling via Abstraction:** Utilized Factory-like dynamic binary signature analysis to completely decouple low-level components from concrete spreadsheet classes. The initialization layer remains unchanged even if future library updates introduce new file extensions, while successfully neutralizing manual human error (improperly renamed files).
+  * **Zero-Loss Precision Control:** Enforced arithmetic ledger stability with programmatic ceiling rules via exact `BigDecimal` mapping, preventing scientific exponential notations and multi-million rounding drift within the automated SAP integration bus.
+
+### 3. [High-Concurrency Automated Staging Area (PSA) Subsystem](https://github.com/an-ekimenko/Jck_GSPassportization)
 *Target Systems: MS SQL Server | Enterprise Web Services | SAP BW/4HANA*
 * **Architectural Challenge & Solution:** Designed a high-throughput, asynchronous ingestion framework to extract volatile gas station master data and complex hardware asset telemetry into an intermediate persistent staging environment. The system utilizes a clean **Dependency Injection (DI)** architecture to eliminate global singletons and implicit lifecycle bottlenecks.
 * **Solutions & Decoupling Highlights:**
@@ -36,7 +43,7 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
   * **Defensive JSON Deserialization:** Authored a production-grade fault-tolerant deserializer that encapsulates data-cleansing strategies, seamlessly normalizing missing or null elements into safe primitive structures and resolving corrupted alphanumeric identifiers via pre-compiled regex without throwing validation crashes.
   * **Stream-Based Deduplication & Bulk Persistence:** Leverages functional Java Streams to decouple transient Data Transfer Objects (DTOs) from persistent Hibernate entities. Integrates stateful filtering to eliminate duplicated business keys in-memory before executing transaction-aware bulk database flushes, striking an optimal balance between memory constraints and RDBMS round-trip latencies.
 
-### 4. Preemptive Security & Network Resiliency Layer for Legacy Gateways
+### 4. [Preemptive Security & Network Resiliency Layer for Legacy Gateways](https://github.com/an-ekimenko/Jackson_RepairRequests)
 *Target Systems: Microsoft IIS 10.0 Proxy | 1C:TOiR Web Services*
 * **Architectural Challenge & Solution:** Architected an isolated network integration agent designed to interface modern HTTP clients with strict, misconfigured enterprise network perimeters, bypassing firewall-induced session drops and connection drops before encryption completes.
 * **Solutions & Decoupling Highlights:**
@@ -44,7 +51,7 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
   * **State-Aware Lazy Initialization:** Defers network client instantiation until the explicit runtime execution window. This constraint guarantees that the underlying SSLContext is established only after the local trust store has been verified against the latest remote certificates, preventing transport layers from locking onto stale TLS boundaries.
   * **Adaptive Exponential Backoff Retry Strategy:** Embeds a custom retry strategy to survive prolonged network disruptions. Instead of arbitrary counters, recovery attempts scale progressively using an exponential progression formula, preventing scheduling cascading failures.
 
-### 5. Dynamic Cryptographic SSL/TLS Trust Store Hot-Swapping System
+### [5. Dynamic Cryptographic SSL/TLS Trust Store Hot-Swapping System](https://github.com/an-ekimenko/CryptoCertLoader)
 *Target Systems: JVM Security Infrastructure | Distributed Integration Apps*
 * **Architectural Challenge & Solution:** Designed a zero-dependency, pluggable shared-library component automating SSL certificate verification and trust boundaries across neighboring operational modules. It enables enterprise client applications to survive upstream corporate certificate rotations with zero service downtime.
 * **Solutions & Decoupling Highlights:**
@@ -56,28 +63,39 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
 
 ## 📦 Global Artifact Deployment Topology
 
-To maximize resource efficiency and maintain a low memory footprint across the infrastructure, all solutions adopt a **Decoupled Shared-Dependency Model**:
+To maximize operational resource efficiency and maintain a low memory and disk footprint across production hosts, all solutions adopt a strict **Decoupled Shared-Dependency Model**. Heavy third-party framework binaries are entirely stripped from individual runtime modules and dynamically linked via manifest configuration hooks:
 
 ```text
 shared-environment-root/
-├── dependencies/
-├── CryptoCertLoader/
-├── Jck_GSPassportization/
-├── Jackson_RepairRequests/
-├── FuelSurchargesCalculation/
-├── AdditionalBonus/
-└── PlannedFuelKPI/
+├── dependencies/                 # Centralized, shareable third-party library pool (POI, Guice, Log4j2, etc.)
+├── CryptoCertLoader/             # Dynamic cryptographic TLS validation and context re-initialization library
+├── DataTransformationRxWorkers/  # Reactive multi-worker engine handling telemetry stream transformations
+├── Jck_GSPassportization/        # High-performance web-API staging engine for gas station assets
+├── Jackson_RepairRequests/       # Preemptive authentication 1C:TOiR staging area data ingestor
+├── FuelSurchargesCalculation/    # Semicolon-delimited flat CSV retail surcharge aggregator
+├── AdditionalBonus/              # Large file optimization pipeline using formula-driven throttling
+└── PlannedFuelKPI/               # Dynamic Excel context parser utilizing stateful tracking patterns
 ```
 
 ### Operational Component Matrix
 
-* **`dependencies/`** — Centralized shareable library pool (POI, Log4j2, Guice, etc.) designed to enforce strict infrastructure decoupling, optimizing memory and disk footprint across the ecosystem.
-* **`CryptoCertLoader/`** — Programmatic TLS Handshake Interceptor Shared Library.
-* **`Jck_GSPassportization/`** — High-Performance Gas Station Asset Staging Engine: a fault-tolerant ETL utility built on Google Guice Dependency Injection (DI) for total layer decoupling. It guarantees fault-free API responses via an adaptive network retry loop and implements stream-based deduplication alongside defensive deserialization to safely ingest malformed, user-input text and primitive data types.
-* **`Jackson_RepairRequests/`** — Resilient Preemptive Auth 1C:TOiR Data Ingestor: a standalone synchronization module enforcing complete Separation of Concerns (SoC). It handles complex proxy-level constraints via decoupled request-scoped header injections and isolates deprecated security profiles, ensuring maximum ingestion fault-tolerance.
-* **`FuelSurchargesCalculation/`** — Zero-Loss Accounting Metric Aggregator: a highly decoupled enterprise ETL engine designed around strict single-responsibility principles. It features an anti-deadlock synchronized bootstrap layer, native NIO character layer protection, and a fault-tolerant exponential backoff loop to completely bypass file-handling bottlenecks and operating system locks during downstream SAP BW loads.
-* **`AdditionalBonus/`** — Cloud Excel Transformation Utility: an isolated pipeline that guarantees resource leak prevention and auto-cleanup by leveraging formula-driven connection throttling for large file optimization, delivering a fully decoupled footprint observability layer via runtime metadata state serialization.
-* **`PlannedFuelKPI/`** — Resilient ETL Integration Agent: designed around the Separation of Concerns (SoC) paradigm, this utility completely decouples stateful processing vectors to resolve complex infrastructure constraints. It features lock-free concurrent shared-stream reading via InputStream to bypass active operating system file handling locks and handles user-induced format mutations via an automated signature analysis engine.
+* **`dependencies/`**  
+  Centralized shareable library pool (Apache POI, Log4j2, Google Guice, Hibernate, etc.) designed to enforce strict infrastructure decoupling, optimizing memory and disk footprint across the ecosystem.
+* **`CryptoCertLoader/`**  
+  Programmatic TLS Handshake Interceptor Shared Library. Automates dynamic keystore context management and hot-swaps in-memory SSLContext signatures without service restarts.
+* **`DataTransformationRxWorkers/`**  
+  Reactive Multi-Module Data Transformation & Ingestion Engine. Driven by an asynchronous RxJava 3 orchestration core to concurrently fetch, cleanse, and stream multi-schema corporate endpoints into unified MS SQL persistence.
+* **`Jck_GSPassportization/`**  
+  High-Performance Gas Station Asset Staging Engine. A fault-tolerant ETL utility built on Google Guice Dependency Injection (DI) for total layer decoupling. It guarantees fault-free API responses via an adaptive network retry loop and implements stream-based deduplication alongside defensive deserialization to safely ingest malformed user-input text and primitive data types.
+* **`Jackson_RepairRequests/`**  
+  Resilient Preemptive Auth 1C:TOiR Data Ingestor. A standalone synchronization module enforcing complete Separation of Concerns (SoC). It handles complex proxy-level constraints via decoupled request-scoped header injections and isolates deprecated security profiles, ensuring maximum ingestion fault-tolerance.
+* **`FuelSurchargesCalculation/`**  
+  Zero-Loss Accounting Metric Aggregator. A highly decoupled enterprise ETL engine designed around strict single-responsibility principles. It features an anti-deadlock synchronized bootstrap layer, native NIO character layer protection, and a fault-tolerant exponential backoff loop to completely bypass file-handling bottlenecks and operating system locks during downstream SAP BW loads.
+* **`AdditionalBonus/`**  
+  Cloud Excel Transformation Utility. An isolated pipeline that guarantees resource leak prevention and auto-cleanup by leveraging formula-driven connection throttling for large file optimization, delivering a fully decoupled footprint observability layer via runtime metadata state serialization.
+* **`PlannedFuelKPI/`**  
+  Resilient ETL Integration Agent. Designed around the Separation of Concerns (SoC) paradigm, this utility completely decouples stateful processing vectors to resolve complex infrastructure constraints. It features lock-free concurrent shared-stream reading via InputStream to bypass active operating system file handling locks and handles user-induced format mutations via an automated signature analysis engine.
+
 
 ---
 
