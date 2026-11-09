@@ -2,22 +2,25 @@
 ### Solutions Architect | Systems & Integration Architect
 **High-performance integration architectures, data pipeline solutions, and infrastructure decoupling.**
 
----
-
-## 🔭 Executive Profile
-
-Architect and Solutions Engineer with a proven track record of designing high-availability, fault-tolerant, and decoupled data integration pipelines for enterprise ecosystems (including **SAP BW/4HANA**, **1C:TOiR**, and corporate analytical buses). 
-
-Expert in transforming monolith tech debt into highly resilient, distributed micro-utilities, robust network transport subsystems, and stateful processing engines. Specialized in designing pre-flight cryptographic automation, high-performance HTTP connection management, and low-footprint batch persistence layers that safeguard critical accounting ledgers against network and operating system locking bottlenecks.
-
-* **Core Architectures:** Decoupled Service Topologies, Separation of Concerns (SoC), Stateful Stream Extraction, In-Memory Ledger Aggregation, Shared Dependency Environments.
-* **Core Competencies:** Defensive Ingestion Design, Resilient Network Subsystems (Preemptive Auth/Formula driven Backoff), Zero-Loss High-Precision Computations, JVM Hot-Swapping Systems, Test-Driven Quality Control.
-* **Tech Baseline:** Java Enterprise, Google Guice (DI), Apache HttpClient 5, Hibernate, Apache POI/Spire.XLS, Jackson (JSON/YAML), JUnit 5, Mockito, Log4j2/SLF4J, P6Spy.
-
+Architect & Solutions Engineer specializing in fault-tolerant data integration architectures for enterprise ecosystems (such as SAP BW/4HANA, 1C:TOiR) and transforming monoliths into distributed services.
+* **Architecture:** Decoupled Service Topologies, Separation of Concerns (SoC), Dependency Injection (DI) Lifecycle Management, Reactive Stream Orchestration, In-Memory Ledger Aggregation.
+* **Core Competencies:** End-to-End Data Conversion & ETL Pipelines, Fault-Tolerant Cross-Source Integration (REST APIs, RDBMS, Legacy File Structures), Resilient Network Transport Subsystems, Real-Time Streaming & Reactive Data Processing, Test-Driven Quality Control.
+* **Tech Baseline:** Java Enterprise, RxJava 3, Java Stream API, Google Guice, Apache HttpClient 5, Hibernate, Apache POI/Spire.XLS, Jackson (JSON/YAML), JUnit 5, Mockito, Log4j2/SLF4J, P6Spy, Custom SSL/TLS Trust Store Hot-Swapping Infrastructure.
 ---
 ## 🏗 Selected Enterprise Architectural Solutions
 
-### 1. Decoupled KPI & Surcharge Analytical Ingestion Pipeline
+### 1. Reactive Multi-Module Data Transformation & Ingestion Engine
+
+*Target Systems: MS SQL Server Staging | Oracle Database | SAP BW/4HANA*
+
+* **Architectural Challenge & Solution:** Engineered an asynchronous, multi-module integration engine to orchestrate independent ETL worker pipelines (such as Active Clients Number and Financial Indicators). Powered by an active **RxJava 3** execution core, the application concurrently fetches raw telemetry streams, applies defensive serialization transforms, and flushes persistent models to central staging environments acting as an intermediate data store (PSA).
+* **Solutions & Decoupling Highlights:**
+  * **Flexible Metadata-Driven Scheduling:** Decoupled worker execution loops from static source configurations by introducing an external profile registry (`application.yaml`). Features an emergency bypassing mode (**`xn`** parameter) to override internal timer filters and execute instant ad-hoc synchronization jobs.
+  * **Dynamic Entity Integration:** Eliminated compile-time dependencies inside the core infrastructure module by building a reflection-based entity scanner. The master **Google Guice 7** dependency container maps and loads designated persistent models on-the-fly via external resource manifests (`entities.yaml`).
+  * **Fault-Tolerant Serialization & Normalization:** Authored specialized streaming Jackson deserializers backed by centralized normalization utilities (**`NumericParser`**). This architecture isolates the core RDBMS layer from volatile source payloads by dynamically sanitizing locale-specific fractions (replacing commas with periods) and parsing alphanumeric identifiers defensively.
+
+
+### 2. Decoupled KPI & Surcharge Analytical Ingestion Pipeline
 *Target Systems: SAP BW Data Bus | Corporate Data Warehouses*
 * **Architectural Challenge & Solution:** Replaced a tightly coupled legacy monolith class with a modular pipeline designed around strict **Separation of Concerns (SoC)** and **Single Responsibility Principles (SRP)**. By isolating initialization, file streaming, cell-parsing, and serialization into distinct components, the system shields downstream analytical platforms from evolving spreadsheet structures.
 * **Solutions & Decoupling Highlights:**
@@ -25,7 +28,7 @@ Expert in transforming monolith tech debt into highly resilient, distributed mic
   * **Loose Coupling via Abstraction:** Utilized Factory-like dynamic binary signature analysis to completely decouple low-level components from concrete spreadsheet classes. The initialization layer remains completely unchanged even if future library updates introduce new file extensions, while successfully neutralizing manual human-error (improperly renamed files).
   * **Zero-Loss Precision Control:** Enforced arithmetic ledger stability with programmatic ceiling rules, preventing scientific exponential notations and multi-million rounding drift.
 
-### 2. High-Concurrency Automated Staging Area (PSA) Subsystem
+### 3. High-Concurrency Automated Staging Area (PSA) Subsystem
 *Target Systems: MS SQL Server | Enterprise Web Services | SAP BW/4HANA*
 * **Architectural Challenge & Solution:** Designed a high-throughput, asynchronous ingestion framework to extract volatile gas station master data and complex hardware asset telemetry into an intermediate persistent staging environment. The system utilizes a clean **Dependency Injection (DI)** architecture to eliminate global singletons and implicit lifecycle bottlenecks.
 * **Solutions & Decoupling Highlights:**
@@ -33,7 +36,7 @@ Expert in transforming monolith tech debt into highly resilient, distributed mic
   * **Defensive JSON Deserialization:** Authored a production-grade fault-tolerant deserializer that encapsulates data-cleansing strategies, seamlessly normalizing missing or null elements into safe primitive structures and resolving corrupted alphanumeric identifiers via pre-compiled regex without throwing validation crashes.
   * **Stream-Based Deduplication & Bulk Persistence:** Leverages functional Java Streams to decouple transient Data Transfer Objects (DTOs) from persistent Hibernate entities. Integrates stateful filtering to eliminate duplicated business keys in-memory before executing transaction-aware bulk database flushes, striking an optimal balance between memory constraints and RDBMS round-trip latencies.
 
-### 3. Preemptive Security & Network Resiliency Layer for Legacy Gateways
+### 4. Preemptive Security & Network Resiliency Layer for Legacy Gateways
 *Target Systems: Microsoft IIS 10.0 Proxy | 1C:TOiR Web Services*
 * **Architectural Challenge & Solution:** Architected an isolated network integration agent designed to interface modern HTTP clients with strict, misconfigured enterprise network perimeters, bypassing firewall-induced session drops and connection drops before encryption completes.
 * **Solutions & Decoupling Highlights:**
@@ -41,7 +44,7 @@ Expert in transforming monolith tech debt into highly resilient, distributed mic
   * **State-Aware Lazy Initialization:** Defers network client instantiation until the explicit runtime execution window. This constraint guarantees that the underlying SSLContext is established only after the local trust store has been verified against the latest remote certificates, preventing transport layers from locking onto stale TLS boundaries.
   * **Adaptive Exponential Backoff Retry Strategy:** Embeds a custom retry strategy to survive prolonged network disruptions. Instead of arbitrary counters, recovery attempts scale progressively using an exponential progression formula, preventing scheduling cascading failures.
 
-### 4. Dynamic Cryptographic SSL/TLS Trust Store Hot-Swapping System
+### 5. Dynamic Cryptographic SSL/TLS Trust Store Hot-Swapping System
 *Target Systems: JVM Security Infrastructure | Distributed Integration Apps*
 * **Architectural Challenge & Solution:** Designed a zero-dependency, pluggable shared-library component automating SSL certificate verification and trust boundaries across neighboring operational modules. It enables enterprise client applications to survive upstream corporate certificate rotations with zero service downtime.
 * **Solutions & Decoupling Highlights:**
