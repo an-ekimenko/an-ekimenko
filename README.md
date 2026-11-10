@@ -25,8 +25,8 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
 *Target Systems: SAP BW Data Bus | Corporate Data Warehouses*
 
 * **Architectural Challenge & Solution:** Replaced a set of tightly coupled legacy monolith classes with a modular ingestion architecture designed around strict **Separation of Concerns (SoC)** and **Single Responsibility Principles (SRP)**. This architectural blueprint is deployed across **two distinct yet structurally aligned extraction utilities** targeting corporate spreadsheets:
-  * **[FuelSurchargesCalculation](https://github.com)** — Specifically engineered to parse critical retail fuel surcharge structures.
-  * **[PlannedFuelKPI](https://github.com)** — Designed to extract complex, volatile multi-layered organizational Key Performance Indicators.
+  * **[FuelSurchargesCalculation](https://github.com/an-ekimenko/FuelSurchargesCalculation)** — Specifically engineered to parse critical retail fuel surcharge structures.
+  * **[PlannedFuelKPI](https://github.com/an-ekimenko/PlannedFuelKPI)** — Designed to extract complex, volatile multi-layered organizational Key Performance Indicators.
   
   By isolating initialization, file streaming, cell-parsing, and serialization into independent components, both systems completely shield downstream analytical platforms from evolving worksheet structures.
 
