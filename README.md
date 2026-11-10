@@ -3,7 +3,7 @@
 **High-performance integration architectures, data pipeline solutions, and infrastructure decoupling.**
 
 Architect & Solutions Engineer specializing in fault-tolerant data integration architectures for enterprise ecosystems (such as SAP BW/4HANA, 1C:TOiR) and transforming monoliths into distributed services.
-* **Architecture:** Decoupled Service Topologies, Separation of Concerns (SoC), Dependency Injection (DI) Lifecycle Management, Reactive Stream Orchestration, In-Memory Ledger Aggregation.
+* **Architecture:** Decoupled Service Topologies, Separation of Concerns (SoC), Dependency Injection (DI) Lifecycle Management, Metadata-Driven Initialization, Reactive Stream Orchestration, In-Memory Ledger Aggregation.
 * **Core Competencies:** End-to-End Data Conversion & ETL Pipelines, Fault-Tolerant Cross-Source Integration (REST APIs, RDBMS, Legacy File Structures), Resilient Network Transport Subsystems, Real-Time Streaming & Reactive Data Processing, Test-Driven Quality Control.
 * **Tech Baseline:** Java Enterprise, RxJava 3, Java Stream API, Google Guice, Apache HttpClient 5, Hibernate, Apache POI/Spire.XLS, Jackson (JSON/YAML), JUnit 5, Mockito, Log4j2/SLF4J, P6Spy, Custom SSL/TLS Trust Store Hot-Swapping Infrastructure.
 ---
@@ -16,7 +16,7 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
 * **Architectural Challenge & Solution:** Engineered an asynchronous, multi-module integration engine to orchestrate independent ETL worker pipelines (such as Active Clients Number and Financial Indicators). Powered by an active **RxJava 3** execution core, the application concurrently fetches raw telemetry streams, applies defensive serialization transforms, and flushes persistent models to central staging environments acting as an intermediate data store (PSA).
 * **Solutions & Decoupling Highlights:**
   * **Flexible Metadata-Driven Scheduling:** Decoupled worker execution loops from static source configurations by introducing an external profile registry (`application.yaml`). Features an emergency bypassing mode (**`xn`** parameter) to override internal timer filters and execute instant ad-hoc synchronization jobs.
-  * **Dynamic Entity Integration:** Eliminated compile-time dependencies inside the core infrastructure module by building a reflection-based entity scanner. The master **Google Guice 7** dependency container maps and loads designated persistent models on-the-fly via external resource manifests (`entities.yaml`).
+  * **Metadata-Driven Entity Integration:** Eliminated compile-time dependencies and rigid package coupling inside the core infrastructure layer by introducing a dynamic metadata scanner. The master **Google Guice 7** context dynamically ingests, load-swaps via reflection, and registers targeted JPA persistent models at the boot stage using externalized resource declarations (`entities.yaml`).
   * **Fault-Tolerant Serialization & Normalization:** Authored specialized streaming Jackson deserializers backed by centralized normalization utilities (**`NumericParser`**). This architecture isolates the core RDBMS layer from volatile source payloads by dynamically sanitizing locale-specific fractions (replacing commas with periods) and parsing alphanumeric identifiers defensively.
 
 
