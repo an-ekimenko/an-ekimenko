@@ -45,12 +45,16 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
 
 
 ### 4. [Preemptive Security & Network Resiliency Layer for Legacy Gateways](https://github.com/an-ekimenko/Jackson_RepairRequests)
-*Target Systems: Microsoft IIS 10.0 Proxy | 1C:TOiR Web Services*
-* **Architectural Challenge & Solution:** Architected an isolated network integration agent designed to interface modern HTTP clients with strict, misconfigured enterprise network perimeters, bypassing firewall-induced session drops and connection drops before encryption completes.
-* **Solutions & Decoupling Highlights:**
-  * **Preemptive Authentication Protocol:** Integrated an optimized **Apache HttpClient 5** core backed by a managed thread-safe connection pool. Overcame proxy drops caused by anonymous IIS structures by forcing the transport layer to inject custom request-scoped authorization frames (Basic/Bearer) directly inside the initial outbound socket transmission, skipping standard challenge handshakes.
-  * **State-Aware Lazy Initialization:** Defers network client instantiation until the explicit runtime execution window. This constraint guarantees that the underlying SSLContext is established only after the local trust store has been verified against the latest remote certificates, preventing transport layers from locking onto stale TLS boundaries.
-  * **Adaptive Exponential Backoff Retry Strategy:** Embeds a custom retry strategy to survive prolonged network disruptions. Instead of arbitrary counters, recovery attempts scale progressively using an exponential progression formula, preventing scheduling cascading failures.
+
+*Target Systems: Microsoft IIS 10.0 Proxy | 1C:TOiR Web Services | MS SQL Server*
+
+- **Architectural Challenge & Solution:** Refactored a tightly coupled ingestion utility into a modular, **Google Guice 7 DI**-driven integration agent (`Jackson_RepairRequests`) designed to interface modern HTTP clients with strict, misconfigured enterprise network perimeters (`wsisapi.dll`), bypassing firewall-induced session drops while providing automated observability for external job schedulers.
+- **Solutions & Decoupling Highlights:**
+  - **Modular DI & Multi-Schema Auth (`OAuth2` & Preemptive Basic):** Decoupled configuration, transport, serialization, and persistence layers via `RRAppModule`. Integrated an optimized **Apache HttpClient 5** core supporting `basic` (forcing `BasicAuthCache` preemptive credentials on the initial outbound socket packet), static `token`, `oauth2` (Client Credentials Grant with thread-safe in-memory token caching), and `none` schemes alongside full wire-level request/response diagnostics.
+  - **State-Aware Lazy Initialization:** Defers `CloseableHttpClient` instantiation until the explicit runtime execution window. This architectural constraint guarantees that the underlying `SSLContext` is established only after `CertUpdater` verifies and synchronizes the local JVM truststore (`cacerts`) against the latest remote certificates.
+  - **Configurable Exponential Backoff with Jitter:** Embeds a custom `DefaultHttpRequestRetryStrategy` driven by external YAML boundaries (`initial_timeout_ms`, `max_timeout_ms`, `multiplier`, `randomization_factor`) to survive prolonged network disruptions without thundering-herd effects.
+  - **Metadata-Driven Filtering & Scheduler Reporting:** Performs early payload filtering via `RR_DataDeserializer` against configurable `equipment_classifier_codes`, deduplicates records by composite business key (`RepairRequests_PK`), and outputs machine-readable YAML execution summaries (`exchange/result.yaml`) with standard OS exit codes (`0`/`1`).
+
 
 ### [5. Dynamic Cryptographic SSL/TLS Trust Store Hot-Swapping System](https://github.com/an-ekimenko/CryptoCertLoader)
 *Target Systems: JVM Security Infrastructure | Distributed Integration Apps*
