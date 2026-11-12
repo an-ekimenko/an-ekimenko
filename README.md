@@ -35,13 +35,14 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
   * **Loose Coupling via Abstraction:** Utilized Factory-like dynamic binary signature analysis to completely decouple low-level components from concrete spreadsheet classes. The initialization layer remains unchanged even if future library updates introduce new file extensions, while successfully neutralizing manual human error (improperly renamed files).
   * **Zero-Loss Precision Control:** Enforced arithmetic ledger stability with programmatic ceiling rules via exact `BigDecimal` mapping, preventing scientific exponential notations and multi-million rounding drift within the automated SAP integration bus.
 
-### 3. [High-Concurrency Automated Staging Area (PSA) Subsystem](https://github.com/an-ekimenko/Jck_GSPassportization)
+### 3. [High-Concurrency Automated Staging Area (PSA) Subsystem](https://github.com)
 *Target Systems: MS SQL Server | Enterprise Web Services | SAP BW/4HANA*
-* **Architectural Challenge & Solution:** Designed a high-throughput, asynchronous ingestion framework to extract volatile gas station master data and complex hardware asset telemetry into an intermediate persistent staging environment. The system utilizes a clean **Dependency Injection (DI)** architecture to eliminate global singletons and implicit lifecycle bottlenecks.
-* **Solutions & Decoupling Highlights:**
-  * **Google Guice 7 DI Container:** Centrally manages component life-cycles, promoting absolute compile-time loose coupling across the network, serialization, and persistence layers via type-safe constructor and provider-based injections.
-  * **Defensive JSON Deserialization:** Authored a production-grade fault-tolerant deserializer that encapsulates data-cleansing strategies, seamlessly normalizing missing or null elements into safe primitive structures and resolving corrupted alphanumeric identifiers via pre-compiled regex without throwing validation crashes.
-  * **Stream-Based Deduplication & Bulk Persistence:** Leverages functional Java Streams to decouple transient Data Transfer Objects (DTOs) from persistent Hibernate entities. Integrates stateful filtering to eliminate duplicated business keys in-memory before executing transaction-aware bulk database flushes, striking an optimal balance between memory constraints and RDBMS round-trip latencies.
+* **Architectural Overview:** High-throughput ingestion framework for gas station master data and hardware telemetry using **Google Guice 7 DI** for loose coupling, strict connection timeouts, and automated TLS certificate lifecycle management.
+* **Key Components:**
+  * **Resilient HTTP Transport:** Powered by **Apache HttpClient 5** supporting `basic`, `token`, `none`, `OAuth2 Client Credentials (oauth2) with thread-safe token caching` and configurable timeouts.
+  * **TLS & Security:** Custom `KeyStoreManager` / `CertUpdater` (`GSP_HttpClient::triggerCertUpdate`) for hot-swapping `SSLContext` and updating JVM trust stores on the fly.
+  * **Data Processing & Reporting:** Defensive JSON deserialization (`GSP_DataDeserializer`), stream-based deduplication, Hibernate batch persistence, and automated execution summaries (`exchange/result.yaml`) generated for external monitoring services and downstream ETL observability.
+
 
 ### 4. [Preemptive Security & Network Resiliency Layer for Legacy Gateways](https://github.com/an-ekimenko/Jackson_RepairRequests)
 *Target Systems: Microsoft IIS 10.0 Proxy | 1C:TOiR Web Services*
@@ -85,8 +86,7 @@ shared-environment-root/
   Programmatic TLS Handshake Interceptor Shared Library. Automates dynamic keystore context management and hot-swaps in-memory SSLContext signatures without service restarts.
 * **`DataTransformationRxWorkers/`**  
   Reactive Multi-Module Data Transformation & Ingestion Engine. Driven by an asynchronous RxJava 3 orchestration core to concurrently fetch, cleanse, and stream multi-schema corporate endpoints into unified MS SQL persistence.
-* **`Jck_GSPassportization/`**  
-  High-Performance Gas Station Asset Staging Engine. A fault-tolerant ETL utility built on Google Guice Dependency Injection (DI) for total layer decoupling. It guarantees fault-free API responses via an adaptive network retry loop and implements stream-based deduplication alongside defensive deserialization to safely ingest malformed user-input text and primitive data types.
+* **Jck_GSPassportization/** High-Performance Gas Station Asset Staging Engine utilizing Google Guice DI, multi-schema authentication (`basic`, `token`, `none`, `oauth2 with caching`), configurable transport timeouts, runtime TLS certificate rotation, defensive JSON parsing, stream deduplication, and automated `exchange/result.yaml` reporting for SAP BW/4HANA.
 * **`Jackson_RepairRequests/`**  
   Resilient Preemptive Auth 1C:TOiR Data Ingestor. A standalone synchronization module enforcing complete Separation of Concerns (SoC). It handles complex proxy-level constraints via decoupled request-scoped header injections and isolates deprecated security profiles, ensuring maximum ingestion fault-tolerance.
 * **`FuelSurchargesCalculation/`**  
