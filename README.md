@@ -9,15 +9,15 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
 ---
 ## 🏗 Selected Enterprise Architectural Solutions
 
-### 1. [Reactive Multi-Module Data Transformation & Ingestion Engine](https://github.com/an-ekimenko/DataTransformationRxWorkers)
+### 1. [Reactive Multi-Module Data Transformation & Ingestion Engine](https://github.com/an-ekimenko/DataTransformationRxWorkers.git)
 
 *Target Systems: MS SQL Server Staging | Oracle Database | SAP BW/4HANA*
 
-* **Architectural Challenge & Solution:** Engineered an asynchronous, multi-module integration engine to orchestrate independent ETL worker pipelines (such as Active Clients Number and Financial Indicators). Powered by an active **RxJava 3** execution core, the application concurrently fetches raw telemetry streams, applies defensive serialization transforms, and flushes persistent models to central staging environments acting as an intermediate data store (PSA).
-* **Solutions & Decoupling Highlights:**
-  * **Flexible Metadata-Driven Scheduling:** Decoupled worker execution loops from static source configurations by introducing an external profile registry (`application.yaml`). Features an emergency bypassing mode (**`xn`** parameter) to override internal timer filters and execute instant ad-hoc synchronization jobs.
-  * **Metadata-Driven Entity Integration:** Eliminated compile-time dependencies and rigid package coupling inside the core infrastructure layer by introducing a dynamic metadata scanner. The master **Google Guice 7** context dynamically ingests, load-swaps via reflection, and registers targeted JPA persistent models at the boot stage using externalized resource declarations (`entities.yaml`).
-  * **Fault-Tolerant Serialization & Normalization:** Authored specialized streaming Jackson deserializers backed by centralized normalization utilities (**`NumericParser`**). This architecture isolates the core RDBMS layer from volatile source payloads by dynamically sanitizing locale-specific fractions (replacing commas with periods) and parsing alphanumeric identifiers defensively.
+- **Architectural Challenge & Solution:** Designed an asynchronous, multi-module ETL pipeline (`ACN_Worker` and `FI_Worker`) built on **RxJava 3** and **Google Guice 7**. The engine concurrently processes payloads from REST APIs and Oracle DB, applies data normalization, and loads staging models into MS SQL Server (PSA) for subsequent SAP BW/4HANA ingestion.
+- **Key Architectural Highlights:**
+  - **`AbstractResilientWorker` Base Class:** Centralized retry logic, monotonic `System.nanoTime()` budget tracking, jitter-tolerant exponential backoff, and early-aborted attempts to protect execution limits.
+  - **Scheduling & Concurrency Controls:** Implements a `2000 ms` execution window with `lastExecutionMap` tracking to handle JVM pauses, paired with RxJava `isRunning()` gates and `AtomicBoolean` locks to prevent race conditions and DB lock contention.
+  - **Dynamic Configuration & CLI Execution:** Decoupled worker registration via YAML manifests (`application.yaml` and `entities.yaml`), supporting full emergency execution (`xn`), selective single-worker runs (`xn <alias>`), and reflection-based JPA entity mapping.
 
 
 ### 2. Decoupled KPI & Surcharge Analytical Ingestion Pipeline
@@ -35,7 +35,7 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
   * **Loose Coupling via Abstraction:** Utilized Factory-like dynamic binary signature analysis to completely decouple low-level components from concrete spreadsheet classes. The initialization layer remains unchanged even if future library updates introduce new file extensions, while successfully neutralizing manual human error (improperly renamed files).
   * **Zero-Loss Precision Control:** Enforced arithmetic ledger stability with programmatic ceiling rules via exact `BigDecimal` mapping, preventing scientific exponential notations and multi-million rounding drift within the automated SAP integration bus.
 
-### 3. [High-Concurrency Automated Staging Area (PSA) Subsystem](https://github.com)
+### 3. [High-Concurrency Automated Staging Area (PSA) Subsystem](https://github.com/an-ekimenko/Jck_GSPassportization.git))
 
 *Target Systems: MS SQL Server | Enterprise Web Services | SAP BW/4HANA*
 
@@ -91,8 +91,7 @@ shared-environment-root/
   Centralized shareable library pool (Apache POI, Log4j2, Google Guice, Hibernate, etc.) designed to enforce strict infrastructure decoupling, optimizing memory and disk footprint across the ecosystem.
 * **`CryptoCertLoader/`**  
   Programmatic TLS Handshake Interceptor Shared Library. Automates dynamic keystore context management and hot-swaps in-memory SSLContext signatures without service restarts.
-* **`DataTransformationRxWorkers/`**  
-  Reactive Multi-Module Data Transformation & Ingestion Engine. Driven by an asynchronous RxJava 3 orchestration core to concurrently fetch, cleanse, and stream multi-schema corporate endpoints into unified MS SQL persistence.
+* **`DataTransformationRxWorkers/`** Reactive Multi-Module ETL & Ingestion Engine powered by RxJava 3 and Google Guice 7. Features a unified `AbstractResilientWorker` resilience template (monotonic `System.nanoTime()` budget tracking and jitter-tolerant exponential backoff), jitter-proof `2000 ms` scheduling windows, two-tier `AtomicBoolean` backpressure guards, and dynamic YAML-driven worker/alias discovery supporting selective emergency execution (`xn` / `xn <alias>`).
 * **Jck_GSPassportization/** High-Performance Gas Station Asset Staging Engine utilizing Google Guice DI, multi-schema authentication (`basic`, `token`, `none`, `oauth2 with caching`), configurable transport timeouts, runtime TLS certificate rotation, defensive JSON parsing, stream deduplication, and automated `exchange/result.yaml` reporting for SAP BW/4HANA.
 * **`Jackson_RepairRequests/`**  
   Resilient Preemptive Auth 1C:TOiR Data Ingestor. A standalone synchronization module enforcing complete Separation of Concerns (SoC). It handles complex proxy-level constraints via decoupled request-scoped header injections and isolates deprecated security profiles, ensuring maximum ingestion fault-tolerance.
