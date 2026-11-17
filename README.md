@@ -13,11 +13,12 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
 
 *Target Systems: MS SQL Server Staging | Oracle Database | SAP BW/4HANA*
 
-- **Architectural Challenge & Solution:** Designed an asynchronous, multi-module ETL pipeline (`ACN_Worker` and `FI_Worker`) built on **RxJava 3** and **Google Guice 7**. The engine concurrently processes payloads from REST APIs and Oracle DB, applies data normalization, and loads staging models into MS SQL Server (PSA) for subsequent SAP BW/4HANA ingestion.
-- **Key Architectural Highlights:**
-  - **`AbstractResilientWorker` Base Class:** Centralized retry logic, monotonic `System.nanoTime()` budget tracking, jitter-tolerant exponential backoff, and early-aborted attempts to protect execution limits.
-  - **Scheduling & Concurrency Controls:** Implements a `2000 ms` execution window with `lastExecutionMap` tracking to handle JVM pauses, paired with RxJava `isRunning()` gates and `AtomicBoolean` locks to prevent race conditions and DB lock contention.
-  - **Dynamic Configuration & CLI Execution:** Decoupled worker registration via YAML manifests (`application.yaml` and `entities.yaml`), supporting full emergency execution (`xn`), selective single-worker runs (`xn <alias>`), and reflection-based JPA entity mapping.
+* **Architectural Challenge & Solution:** Asynchronous multi-module ETL pipeline (`ACN_Worker` and `FI_Worker`) on **RxJava 3** and **Google Guice 7** for concurrent API/Oracle DB ingestion (`CompletableFuture`) and MS SQL Server (PSA) staging loads.
+* **Key Architectural Highlights:**
+  * **`AbstractResilientWorker` Base Class:** Manages lifecycle safety, monotonic budget tracking (`System.nanoTime()` vs `max_timeout_ms`), exponential backoff with jitter (`ThreadLocalRandom` via `RANDOMIZATION_FACTOR`), and fast-fail retry pruning.
+  * **Scheduling & Concurrency:** Utilizes a `2000 ms` window with `lastExecutionMap` deduplication, RxJava `isRunning()` gates, and `AtomicBoolean` locks to eliminate overlap and database lock contention.
+  * **Shared Infrastructure & CLI:** Centralizes **HikariCP** connections in `SharedInfraModule` (`SessionFactory`), loads JPA entities via `entities.yaml`, and supports dynamic worker discovery through `application.yaml` (`xn` / `xn <alias>`).
+  * **Testing (`JUnit 5` & `Mockito`):** Full test suite across 4 Maven modules (`AbstractResilientWorkerTest`, `RxSchedulerMainTest`, `ACN_AppTest`, `FI_AppTest`, custom IO/deserializer tests) utilizing `@TempDir` and static mocks.
 
 
 ### 2. Decoupled KPI & Surcharge Analytical Ingestion Pipeline
@@ -89,17 +90,17 @@ shared-environment-root/
 
 * **`dependencies/`**  
   Centralized shareable library pool (Apache POI, Log4j2, Google Guice, Hibernate, etc.) designed to enforce strict infrastructure decoupling, optimizing memory and disk footprint across the ecosystem.
-* **`CryptoCertLoader/`**  
+* **CryptoCertLoader/**  
   Programmatic TLS Handshake Interceptor Shared Library. Automates dynamic keystore context management and hot-swaps in-memory SSLContext signatures without service restarts.
-* **`DataTransformationRxWorkers/`** Reactive Multi-Module ETL & Ingestion Engine powered by RxJava 3 and Google Guice 7. Features a unified `AbstractResilientWorker` resilience template (monotonic `System.nanoTime()` budget tracking and jitter-tolerant exponential backoff), jitter-proof `2000 ms` scheduling windows, two-tier `AtomicBoolean` backpressure guards, and dynamic YAML-driven worker/alias discovery supporting selective emergency execution (`xn` / `xn <alias>`).
+- **DataTransformationRxWorkers/** Reactive Multi-Module ETL & Ingestion Engine на базе **RxJava 3** и **Google Guice 7**. Включает универсальный паттерн отказоустойчивости `AbstractResilientWorker` (контроль таймаутов через `System.nanoTime()` и экспоненциальную задержку с джиттером через `ThreadLocalRandom`), защищённые от джиттера окна планирования (`2000 ms`), двухуровневый бпрессур-контроль (`AtomicBoolean`), общий пул соединений **HikariCP** (`SharedInfraModule` + `entities.yaml`), динамическое YAML-обнаружение воркеров (`xn` / `xn <alias>`) и покрытие тестами **JUnit 5 / Mockito**.
 * **Jck_GSPassportization/** High-Performance Gas Station Asset Staging Engine utilizing Google Guice DI, multi-schema authentication (`basic`, `token`, `none`, `oauth2 with caching`), configurable transport timeouts, runtime TLS certificate rotation, defensive JSON parsing, stream deduplication, and automated `exchange/result.yaml` reporting for SAP BW/4HANA.
-* **`Jackson_RepairRequests/`**  
+* **Jackson_RepairRequests/**  
   Resilient Preemptive Auth 1C:TOiR Data Ingestor. A standalone synchronization module enforcing complete Separation of Concerns (SoC). It handles complex proxy-level constraints via decoupled request-scoped header injections and isolates deprecated security profiles, ensuring maximum ingestion fault-tolerance.
-* **`FuelSurchargesCalculation/`**  
+* **FuelSurchargesCalculation/**  
   Zero-Loss Accounting Metric Aggregator. A highly decoupled enterprise ETL engine designed around strict single-responsibility principles. It features an anti-deadlock synchronized bootstrap layer, native NIO character layer protection, and a fault-tolerant exponential backoff loop to completely bypass file-handling bottlenecks and operating system locks during downstream SAP BW loads.
-* **`AdditionalBonus/`**  
+* **AdditionalBonus/**  
   Cloud Excel Transformation Utility. An isolated pipeline that guarantees resource leak prevention and auto-cleanup by leveraging formula-driven connection throttling for large file optimization, delivering a fully decoupled footprint observability layer via runtime metadata state serialization.
-* **`PlannedFuelKPI/`**  
+* **PlannedFuelKPI/**  
   Resilient ETL Integration Agent. Designed around the Separation of Concerns (SoC) paradigm, this utility completely decouples stateful processing vectors to resolve complex infrastructure constraints. It features lock-free concurrent shared-stream reading via InputStream to bypass active operating system file handling locks and handles user-induced format mutations via an automated signature analysis engine.
 
 
