@@ -47,8 +47,6 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
   - **Defensive Parsing, Deduplication & Observability:** Features a fault-tolerant Jackson deserializer (`gsp.jackson.GSP_DataDeserializer`) for coordinate normalization, scientific notation / non-finite filtering, null-safe array cleansing, and numeric overflow protection, Java Stream invalid-ID filtering and business-key deduplication, transactional Hibernate 6+ batch persistence (`GSP_DAO`), and automated YAML execution summaries (`exchange/result.yaml`).
 
 
-
-
 ### 4. [Preemptive Security & Network Resiliency Layer for Legacy Gateways](https://github.com/an-ekimenko/Jackson_RepairRequests)
 
 *Target Systems: Microsoft IIS 10.0 Proxy | 1C:TOiR Web Services | MS SQL Server*
@@ -60,8 +58,18 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
   - **Configurable Exponential Backoff with Jitter:** Embeds a custom `DefaultHttpRequestRetryStrategy` driven by external YAML boundaries (`initial_timeout_ms`, `max_timeout_ms`, `multiplier`, `randomization_factor`) to survive prolonged network disruptions without thundering-herd effects.
   - **Metadata-Driven Filtering & Scheduler Reporting:** Performs early payload filtering via `RR_DataDeserializer` against configurable `equipment_classifier_codes`, deduplicates records by composite business key (`RepairRequests_PK`), and outputs machine-readable YAML execution summaries (`exchange/result.yaml`) with standard OS exit codes (`0`/`1`).
 
+### 5. [Automated Corporate Member Activity Ingestion Agent](https://github.com/an-ekimenko/Jck_ActiveClientsNumber.git)
 
-### [5. Dynamic Cryptographic SSL/TLS Trust Store Hot-Swapping System](https://github.com/an-ekimenko/CryptoCertLoader)
+*Target Systems: Enterprise REST Gateways | MS SQL Server Staging (PSA) | SAP BW/4HANA*
+
+- **Architectural Challenge & Solution:** Built a standalone, decoupled Java 17 ETL synchronization agent (`Jck_ActiveClientsNumber`) powered by **Google Guice 7 DI**, **Apache HttpClient 5**, and **Hibernate 6+** to extract monthly and cumulative annual corporate member activity metrics (`activeClients_Month`, `activeClients_Year`) and persist deduplicated batches into MS SQL Server (`ActiveClientsNumber`) for downstream **SAP BW/4HANA** loading.
+- **Solutions & Decoupling Highlights:**
+  - **Timezone-Anchored Reporting Window Resolution:** Dynamically computes the exact first and last calendar days of the preceding month in the `Europe/Minsk` timezone (`ACN_App`), safely appending `periodbegin` and `periodend` query parameters to configured target endpoints.
+  - **Resilient Transport, OAuth2 Caching & Jittered Retries:** Encapsulates a pooled `ACN_HttpClient` supporting `basic`, static `token`, `oauth2` (`client_credentials` grant with thread-safe in-memory token caching), and `none` schemes, paired with a custom `ExponentialBackoffRetryStrategy` enforcing randomized jitter, `Retry-After` compliance, and strict execution time budgets (`initial_timeout_ms` / `max_timeout_ms`).
+  - **Lazy TLS Synchronization & Composite-Key Deduplication:** Triggers `CertUpdater` and `KeyStoreManager` prior to first client initialization for zero-downtime certificate rotation, sanitizes comma-separated decimals and non-finite metrics (`NaN`/`Infinity`) via `ACN_DataDeserializer`, deduplicates records by `@Embeddable` composite key `ACN_PK` (`YYYYMM`, `memberCode`), and outputs scheduler summaries to `exchange/result.yaml`.
+
+
+### [6. Dynamic Cryptographic SSL/TLS Trust Store Hot-Swapping System](https://github.com/an-ekimenko/CryptoCertLoader)
 *Target Systems: JVM Security Infrastructure | Distributed Integration Apps*
 * **Architectural Challenge & Solution:** Designed a zero-dependency, pluggable shared-library component automating SSL certificate verification and trust boundaries across neighboring operational modules. It enables enterprise client applications to survive upstream corporate certificate rotations with zero service downtime.
 * **Solutions & Decoupling Highlights:**
