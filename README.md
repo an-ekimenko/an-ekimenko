@@ -36,15 +36,16 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
   * **Loose Coupling via Abstraction:** Utilized Factory-like dynamic binary signature analysis to completely decouple low-level components from concrete spreadsheet classes. The initialization layer remains unchanged even if future library updates introduce new file extensions, while successfully neutralizing manual human error (improperly renamed files).
   * **Zero-Loss Precision Control:** Enforced arithmetic ledger stability with programmatic ceiling rules via exact `BigDecimal` mapping, preventing scientific exponential notations and multi-million rounding drift within the automated SAP integration bus.
 
-### 3. [High-Concurrency Automated Staging Area (PSA) Subsystem](https://github.com/an-ekimenko/Jck_GSPassportization.git))
+### 3. [High-Concurrency Automated Staging Area (PSA) Subsystem](https://github.com/an-ekimenko/Jck_GSPassportization.git)
 
 *Target Systems: MS SQL Server | Enterprise Web Services | SAP BW/4HANA*
 
 - **Architectural Challenge & Solution:** Engineered a high-throughput, decoupled ingestion framework (`Jck_GSPassportization`) for gas station master data and hardware telemetry using **Google Guice 7 DI**, guaranteeing loose coupling across network, serialization, and persistence layers while providing automated TLS lifecycle management and scheduler observability.
 - **Solutions & Decoupling Highlights:**
-  - **Resilient Multi-Schema HTTP Transport:** Powered by **Apache HttpClient 5** (`GSP_HttpClient`) with a managed connection pool, configurable timeouts, adaptive exponential retry policies, and support for `basic`, static `token`, `oauth2` (Client Credentials Grant with thread-safe in-memory token caching), and `none` authentication schemes.
+  - **Resilient Multi-Schema HTTP Transport:** Powered by **Apache HttpClient 5** (`GSP_HttpClient`) with a managed connection pool, configurable timeouts, jittered exponential backoff retry policies (`ExponentialBackoffRetryStrategy` with `initial_timeout_ms` / `max_timeout_ms` budgets), and support for `basic`, static `token`, `oauth2` (Client Credentials Grant with thread-safe in-memory token caching), and `none` authentication schemes.
   - **State-Aware TLS & Certificate Lifecycle Management:** Integrates custom `KeyStoreManager` and `CertUpdater` (`GSP_HttpClient::triggerCertUpdate`) with lazy client initialization, intercepting remote certificate chains to update the local JVM `cacerts` store and hot-swap `SSLContext` on the fly.
-  - **Defensive Parsing, Deduplication & Observability:** Features a fault-tolerant Jackson deserializer (`GSP_DataDeserializer`) for coordinate normalization and numeric overflow protection, Java Stream business-key deduplication, transactional Hibernate 6+ batch persistence (`GSP_DAO`), and automated YAML execution summaries (`exchange/result.yaml`).
+  - **Defensive Parsing, Deduplication & Observability:** Features a fault-tolerant Jackson deserializer (`gsp.jackson.GSP_DataDeserializer`) for coordinate normalization, scientific notation / non-finite filtering, null-safe array cleansing, and numeric overflow protection, Java Stream invalid-ID filtering and business-key deduplication, transactional Hibernate 6+ batch persistence (`GSP_DAO`), and automated YAML execution summaries (`exchange/result.yaml`).
+
 
 
 
