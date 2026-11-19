@@ -62,12 +62,13 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
 
 *Target Systems: Enterprise REST Gateways | MS SQL Server Staging (PSA) | SAP BW/4HANA*
 
-- **Architectural Challenge & Solution:** Built a standalone, decoupled Java 17 ETL synchronization agent (`Jck_ActiveClientsNumber`) powered by **Google Guice 7 DI**, **Apache HttpClient 5**, and **Hibernate 6+** to extract monthly and cumulative annual corporate member activity metrics (`activeClients_Month`, `activeClients_Year`) and persist deduplicated batches into MS SQL Server (`ActiveClientsNumber`) for downstream **SAP BW/4HANA** loading.
-- **Solutions & Decoupling Highlights:**
-  - **Timezone-Anchored Reporting Window Resolution:** Dynamically computes the exact first and last calendar days of the preceding month in the `Europe/Minsk` timezone (`ACN_App`), safely appending `periodbegin` and `periodend` query parameters to configured target endpoints.
-  - **Resilient Transport, OAuth2 Caching & Jittered Retries:** Encapsulates a pooled `ACN_HttpClient` supporting `basic`, static `token`, `oauth2` (`client_credentials` grant with thread-safe in-memory token caching), and `none` schemes, paired with a custom `ExponentialBackoffRetryStrategy` enforcing randomized jitter, `Retry-After` compliance, and strict execution time budgets (`initial_timeout_ms` / `max_timeout_ms`).
-  - **Lazy TLS Synchronization & Composite-Key Deduplication:** Triggers `CertUpdater` and `KeyStoreManager` prior to first client initialization for zero-downtime certificate rotation, sanitizes comma-separated decimals and non-finite metrics (`NaN`/`Infinity`) via `ACN_DataDeserializer`, deduplicates records by `@Embeddable` composite key `ACN_PK` (`YYYYMM`, `memberCode`), and outputs scheduler summaries to `exchange/result.yaml`.
-
+* **Architectural Challenge & Solution:** Overview of the decoupled Java 17 ETL agent (`Jck_ActiveClientsNumber`) designed to extract and store corporate member metrics for SAP BW/4HANA. 
+* **Solutions & Decoupling Highlights:**
+  * **Timezone-Anchored Reporting Window Resolution:** Handles period calculation using the `Europe/Minsk` timezone (`ACN_App`) to parameterize requests.
+  * **Dual-Layer Jittered Exponential Backoff:** Implements adaptive retry logic with randomized jitter (`RANDOMIZATION_FACTOR = 0.5`) and timeout caps across both pipeline phases:
+    - *API Fetch (`ACN_HttpClient`):* Handles network errors and retryable HTTP statuses (`429`, `500–504`), respecting `Retry-After` headers.
+    - *DB Write (`ACN_DAO`):* Retries batched Hibernate operations (`flush`/`clear` per 50 entities) during SQL outages or deadlocks (`Error 1205`), while failing immediately on constraint violations.
+  * **Auth, TLS & Deduplication:** Supports `basic`, `token`, `oauth2` (with in-memory caching), and `none` auth, dynamic TLS hot-swapping via `CertUpdater`, safe parsing (`ACN_DataDeserializer`), composite-key deduplication (`ACN_PK`), and YAML reporting (`exchange/result.yaml`).
 
 ### [6. Dynamic Cryptographic SSL/TLS Trust Store Hot-Swapping System](https://github.com/an-ekimenko/CryptoCertLoader)
 *Target Systems: JVM Security Infrastructure | Distributed Integration Apps*
