@@ -36,7 +36,7 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
   * **Loose Coupling via Abstraction:** Utilized Factory-like dynamic binary signature analysis to completely decouple low-level components from concrete spreadsheet classes. The initialization layer remains unchanged even if future library updates introduce new file extensions, while successfully neutralizing manual human error (improperly renamed files).
   * **Zero-Loss Precision Control:** Enforced arithmetic ledger stability with programmatic ceiling rules via exact `BigDecimal` mapping, preventing scientific exponential notations and multi-million rounding drift within the automated SAP integration bus.
 
-### 3. [High-Concurrency Automated Staging Area (PSA) Subsystem](https://github.com/an-ekimenko/Jck_GSPassportization.git)
+### 3. [High-Concurrency Automated Staging Area (PSA) Subsystem](https://github.com/an-ekimenko/GSPassportization.git)
 
 *Target Systems: MS SQL Server | Enterprise Web Services | SAP BW/4HANA*
 
@@ -47,7 +47,7 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
   - **Defensive Parsing, Deduplication & Observability:** Features a fault-tolerant Jackson deserializer (`gsp.jackson.GSP_DataDeserializer`) for coordinate normalization, scientific notation / non-finite filtering, null-safe array cleansing, and numeric overflow protection, Java Stream invalid-ID filtering and business-key deduplication, transactional Hibernate 6+ batch persistence (`GSP_DAO`), and automated YAML execution summaries (`exchange/result.yaml`).
 
 
-### 4. [Preemptive Security & Network Resiliency Layer for Legacy Gateways](https://github.com/an-ekimenko/Jackson_RepairRequests)
+### 4. [Preemptive Security & Network Resiliency Layer for Legacy Gateways](https://github.com/an-ekimenko/RepairRequests)
 
 *Target Systems: Microsoft IIS 10.0 Proxy | 1C:TOiR Web Services | MS SQL Server*
 
@@ -58,7 +58,7 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
   - **Configurable Exponential Backoff with Jitter:** Embeds a custom `DefaultHttpRequestRetryStrategy` driven by external YAML boundaries (`initial_timeout_ms`, `max_timeout_ms`, `multiplier`, `randomization_factor`) to survive prolonged network disruptions without thundering-herd effects.
   - **Metadata-Driven Filtering & Scheduler Reporting:** Performs early payload filtering via `RR_DataDeserializer` against configurable `equipment_classifier_codes`, deduplicates records by composite business key (`RepairRequests_PK`), and outputs machine-readable YAML execution summaries (`exchange/result.yaml`) with standard OS exit codes (`0`/`1`).
 
-### 5. [Automated Corporate Member Activity Ingestion Agent](https://github.com/an-ekimenko/Jck_ActiveClientsNumber.git)
+### 5. [Automated Corporate Member Activity Ingestion Agent](https://github.com/an-ekimenko/ActiveClientsNumber.git)
 
 *Target Systems: Enterprise REST Gateways | MS SQL Server Staging (PSA) | SAP BW/4HANA*
 
@@ -84,16 +84,17 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
 
 To maximize operational resource efficiency and maintain a low memory and disk footprint across production hosts, all solutions adopt a strict **Decoupled Shared-Dependency Model**. Heavy third-party framework binaries are entirely stripped from individual runtime modules and dynamically linked via manifest configuration hooks:
 
-```text
+```
 shared-environment-root/
-├── dependencies/                 # Centralized, shareable third-party library pool (POI, Guice, Log4j2, etc.)
-├── CryptoCertLoader/             # Dynamic cryptographic TLS validation and context re-initialization library
-├── DataTransformationRxWorkers/  # Reactive multi-worker engine handling telemetry stream transformations
-├── Jck_GSPassportization/        # High-performance web-API staging engine for gas station assets
-├── Jackson_RepairRequests/       # Preemptive authentication 1C:TOiR staging area data ingestor
-├── FuelSurchargesCalculation/    # Semicolon-delimited flat CSV retail surcharge aggregator
-├── AdditionalBonus/              # Large file optimization pipeline using formula-driven throttling
-└── PlannedFuelKPI/               # Dynamic Excel context parser utilizing stateful tracking patterns
+├── dependencies/               # Centralized, shareable third-party library pool (POI, Guice, Log4j2, etc.)
+├── CryptoCertLoader/           # Dynamic cryptographic TLS validation and context re-initialization library
+├── DataTransformationRxWorkers/# Reactive multi-worker engine handling telemetry stream transformations
+├── GSPassportization/          # High-performance web-API staging engine for gas station assets
+├── ActiveClientsNumber/        # Timezone-aware corporate member telemetry ETL agent with dual-layer retries
+├── RepairRequests/             # Preemptive authentication 1C:TOiR staging area data ingestor
+├── FuelSurchargesCalculation/  # Semicolon-delimited flat CSV retail surcharge aggregator
+├── AdditionalBonus/            # Large file optimization pipeline using formula-driven throttling
+└── PlannedFuelKPI/             # Dynamic Excel context parser utilizing stateful tracking patterns
 ```
 
 ### Operational Component Matrix
@@ -103,8 +104,9 @@ shared-environment-root/
 * **CryptoCertLoader/**  
   Programmatic TLS Handshake Interceptor Shared Library. Automates dynamic keystore context management and hot-swaps in-memory SSLContext signatures without service restarts.
 - **DataTransformationRxWorkers/** Reactive Multi-Module ETL & Ingestion Engine на базе **RxJava 3** и **Google Guice 7**. Включает универсальный паттерн отказоустойчивости `AbstractResilientWorker` (контроль таймаутов через `System.nanoTime()` и экспоненциальную задержку с джиттером через `ThreadLocalRandom`), защищённые от джиттера окна планирования (`2000 ms`), двухуровневый бпрессур-контроль (`AtomicBoolean`), общий пул соединений **HikariCP** (`SharedInfraModule` + `entities.yaml`), динамическое YAML-обнаружение воркеров (`xn` / `xn <alias>`) и покрытие тестами **JUnit 5 / Mockito**.
-* **Jck_GSPassportization/** High-Performance Gas Station Asset Staging Engine utilizing Google Guice DI, multi-schema authentication (`basic`, `token`, `none`, `oauth2 with caching`), configurable transport timeouts, runtime TLS certificate rotation, defensive JSON parsing, stream deduplication, and automated `exchange/result.yaml` reporting for SAP BW/4HANA.
-* **Jackson_RepairRequests/**  
+* **GSPassportization/** High-Performance Gas Station Asset Staging Engine utilizing Google Guice DI, multi-schema authentication (`basic`, `token`, `none`, `oauth2 with caching`), configurable transport timeouts, runtime TLS certificate rotation, defensive JSON parsing, stream deduplication, and automated `exchange/result.yaml` reporting for SAP BW/4HANA.
+* **ActiveClientsNumber/** Timezone-Aware Corporate Member Telemetry ETL Agent utilizing Google Guice 7 DI, multi-schema authentication (`basic`, `token`, `none`, `oauth2` with caching), `Europe/Minsk` reporting period resolution, runtime TLS certificate rotation, dual-layer jittered exponential backoff retries (across both API fetch and MS SQL batch persistence), composite-key deduplication (`ACN_PK`), and automated `exchange/result.yaml` reporting for SAP BW/4HANA.
+* **RepairRequests/**  
   Resilient Preemptive Auth 1C:TOiR Data Ingestor. A standalone synchronization module enforcing complete Separation of Concerns (SoC). It handles complex proxy-level constraints via decoupled request-scoped header injections and isolates deprecated security profiles, ensuring maximum ingestion fault-tolerance.
 * **FuelSurchargesCalculation/**  
   Zero-Loss Accounting Metric Aggregator. A highly decoupled enterprise ETL engine designed around strict single-responsibility principles. It features an anti-deadlock synchronized bootstrap layer, native NIO character layer protection, and a fault-tolerant exponential backoff loop to completely bypass file-handling bottlenecks and operating system locks during downstream SAP BW loads.
