@@ -40,7 +40,7 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
 
 *Target Systems: MS SQL Server | Enterprise Web Services | SAP BW/4HANA*
 
-- **Architectural Challenge & Solution:** Engineered a high-throughput, decoupled ingestion framework (`Jck_GSPassportization`) for gas station master data and hardware telemetry using **Google Guice 7 DI**, guaranteeing loose coupling across network, serialization, and persistence layers while providing automated TLS lifecycle management and scheduler observability.
+- **Architectural Challenge & Solution:** Engineered a high-throughput, decoupled ingestion framework (`GSPassportization`) for gas station master data and hardware telemetry using **Google Guice 7 DI**, guaranteeing loose coupling across network, serialization, and persistence layers while providing automated TLS lifecycle management and scheduler observability.
 - **Solutions & Decoupling Highlights:**
   - **Resilient Multi-Schema HTTP Transport:** Powered by **Apache HttpClient 5** (`GSP_HttpClient`) with a managed connection pool, configurable timeouts, jittered exponential backoff retry policies (`ExponentialBackoffRetryStrategy` with `initial_timeout_ms` / `max_timeout_ms` budgets), and support for `basic`, static `token`, `oauth2` (Client Credentials Grant with thread-safe in-memory token caching), and `none` authentication schemes.
   - **State-Aware TLS & Certificate Lifecycle Management:** Integrates custom `KeyStoreManager` and `CertUpdater` (`GSP_HttpClient::triggerCertUpdate`) with lazy client initialization, intercepting remote certificate chains to update the local JVM `cacerts` store and hot-swap `SSLContext` on the fly.
@@ -62,7 +62,7 @@ Architect & Solutions Engineer specializing in fault-tolerant data integration a
 
 *Target Systems: Enterprise REST Gateways | MS SQL Server Staging (PSA) | SAP BW/4HANA*
 
-* **Architectural Challenge & Solution:** Overview of the decoupled Java 17 ETL agent (`Jck_ActiveClientsNumber`) designed to extract and store corporate member metrics for SAP BW/4HANA. 
+* **Architectural Challenge & Solution:** Overview of the decoupled Java 17 ETL agent (`ActiveClientsNumber`) designed to extract and store corporate member metrics for SAP BW/4HANA. 
 * **Solutions & Decoupling Highlights:**
   * **Timezone-Anchored Reporting Window Resolution:** Handles period calculation using the `Europe/Minsk` timezone (`ACN_App`) to parameterize requests.
   * **Dual-Layer Jittered Exponential Backoff:** Implements adaptive retry logic with randomized jitter (`RANDOMIZATION_FACTOR = 0.5`) and timeout caps across both pipeline phases:
