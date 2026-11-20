@@ -38,41 +38,21 @@ Solutions & Integration Architect specializing in fault-tolerant data ecosystems
   * **Loose Coupling via Abstraction:** Utilized Factory-like dynamic binary signature analysis to completely decouple low-level components from concrete spreadsheet classes. The initialization layer remains unchanged even if future library updates introduce new file extensions, while successfully neutralizing manual human error (improperly renamed files).
   * **Zero-Loss Precision Control:** Enforced arithmetic ledger stability with programmatic ceiling rules via exact `BigDecimal` mapping, preventing scientific exponential notations and multi-million rounding drift within the automated SAP integration bus.
 
-### 3. [High-Concurrency Automated Staging Area (PSA) Subsystem](https://github.com/an-ekimenko/GSPassportization.git)
+### 3. Resilient REST-to-PSA Enterprise Ingestion Agents Suite
+*Target Systems: Enterprise REST APIs | Microsoft IIS 10.0 / 1C:TOiR | MS SQL Server Staging (PSA) | SAP BW/4HANA*
 
-*Target Systems: MS SQL Server | Enterprise Web Services | SAP BW/4HANA*
+- **Shared Architectural Foundation & Capabilities:**
+  - **Modular DI & Declarative Configuration:** Built on **Google Guice 7** with strict Separation of Concerns (`SoC`), shared classpath topology, and a `Fail-Fast properties.yaml` configuration defining authentication strategies, connection/read timeouts (`connect_timeout_ms`, `response_timeout_ms`), initial backoff delays (`initial_timeout_ms`), and overall API execution time budgets (`max_timeout_ms`).
+  - **Pooled Transport & Auth:** Powered by **Apache HttpClient 5** supporting `basic`, static `token`, `oauth2` (with in-memory token caching), and `none` schemes.
+  - **Zero-Downtime TLS & Resiliency:** Features `lazy client initialization`, `runtime JVM cacerts hot-swapping`, and `jittered exponential backoff retries`.
+  - **Defensive Processing & Observability:** Includes `fault-tolerant` Jackson `deserializers`, composite-key deduplication, `transactional` Hibernate 6+ `batch persistence`, `JUnit 5 / Mockito tests`, and `machine-readable scheduler receipts` (*`exchange/result.yaml`*).
 
-- **Architectural Challenge & Solution:** Engineered a high-throughput, decoupled ingestion framework (`GSPassportization`) for gas station master data and hardware telemetry using **Google Guice 7 DI**, guaranteeing loose coupling across network, serialization, and persistence layers while providing automated TLS lifecycle management and scheduler observability.
-- **Solutions & Decoupling Highlights:**
-  - **Resilient Multi-Schema HTTP Transport:** Powered by **Apache HttpClient 5** (`GSP_HttpClient`) with a managed connection pool, configurable timeouts, jittered exponential backoff retry policies (`ExponentialBackoffRetryStrategy` with `initial_timeout_ms` / `max_timeout_ms` budgets), and support for `basic`, static `token`, `oauth2` (Client Credentials Grant with thread-safe in-memory token caching), and `none` authentication schemes.
-  - **State-Aware TLS & Certificate Lifecycle Management:** Integrates custom `KeyStoreManager` and `CertUpdater` (`GSP_HttpClient::triggerCertUpdate`) with lazy client initialization, intercepting remote certificate chains to update the local JVM `cacerts` store and hot-swap `SSLContext` on the fly.
-  - **Defensive Parsing, Deduplication & Observability:** Features a fault-tolerant Jackson deserializer (`gsp.jackson.GSP_DataDeserializer`) for coordinate normalization, scientific notation / non-finite filtering, null-safe array cleansing, and numeric overflow protection, Java Stream invalid-ID filtering and business-key deduplication, transactional Hibernate 6+ batch persistence (`GSP_DAO`), and automated YAML execution summaries (`exchange/result.yaml`).
+- **Specialized Ingestion Agents & Distinctive Features:**
+  - [**GSPassportization** *(Gas Station Asset & Hardware Telemetry Staging)*](https://github.com/an-ekimenko/GSPassportization.git): *`Normalizes`* polymorphic geo-coordinates (filtering *`NaN`/`Infinity`* values), *`sanitizes`* and *`flattens`* fuels arrays into comma-separated strings (with *`scalar fallback`*), and `extracts positive` integer *`station identifiers`* prior to persistence.
+  - [**RepairRequests** *(1C:TOiR Equipment Maintenance & Legacy Gateway Integration)*](https://github.com/an-ekimenko/RepairRequests.git): *`Bypasses proxy drops`* on stateless Microsoft IIS 10.0 *`by forcing preemptive`* BasicAuthCache `credentials`, *`computes annual reporting windows`* (Europe/Minsk), and `filters records` by *`configurable`* equipment classifier codes.
+  - [**ActiveClientsNumber** *(Corporate Member Activity & Monthly Metrics Agent*](https://github.com/an-ekimenko/ActiveClientsNumber.git):  Dynamically resolves preceding month boundaries anchored to `Europe/Minsk`, implements `two-step OAuth2 authentication` (token acquisition followed by authenticated data retrieval), and extends `adaptive jittered retry logic to the Hibernate DAO layer` for MS SQL resilience.
 
-
-### 4. [Preemptive Security & Network Resiliency Layer for Legacy Gateways](https://github.com/an-ekimenko/RepairRequests)
-
-*Target Systems: Microsoft IIS 10.0 Proxy | 1C:TOiR Web Services | MS SQL Server*
-
-- **Architectural Challenge & Solution:** Refactored a tightly coupled ingestion utility into a modular, **Google Guice 7 DI**-driven integration agent (`Jackson_RepairRequests`) designed to interface modern HTTP clients with strict, misconfigured enterprise network perimeters (`wsisapi.dll`), bypassing firewall-induced session drops while providing automated observability for external job schedulers.
-- **Solutions & Decoupling Highlights:**
-  - **Modular DI & Multi-Schema Auth (`OAuth2` & Preemptive Basic):** Decoupled configuration, transport, serialization, and persistence layers via `RRAppModule`. Integrated an optimized **Apache HttpClient 5** core supporting `basic` (forcing `BasicAuthCache` preemptive credentials on the initial outbound socket packet), static `token`, `oauth2` (Client Credentials Grant with thread-safe in-memory token caching), and `none` schemes alongside full wire-level request/response diagnostics.
-  - **State-Aware Lazy Initialization:** Defers `CloseableHttpClient` instantiation until the explicit runtime execution window. This architectural constraint guarantees that the underlying `SSLContext` is established only after `CertUpdater` verifies and synchronizes the local JVM truststore (`cacerts`) against the latest remote certificates.
-  - **Configurable Exponential Backoff with Jitter:** Embeds a custom `DefaultHttpRequestRetryStrategy` driven by external YAML boundaries (`initial_timeout_ms`, `max_timeout_ms`, `multiplier`, `randomization_factor`) to survive prolonged network disruptions without thundering-herd effects.
-  - **Metadata-Driven Filtering & Scheduler Reporting:** Performs early payload filtering via `RR_DataDeserializer` against configurable `equipment_classifier_codes`, deduplicates records by composite business key (`RepairRequests_PK`), and outputs machine-readable YAML execution summaries (`exchange/result.yaml`) with standard OS exit codes (`0`/`1`).
-
-### 5. [Automated Corporate Member Activity Ingestion Agent](https://github.com/an-ekimenko/ActiveClientsNumber.git)
-
-*Target Systems: Enterprise REST Gateways | MS SQL Server Staging (PSA) | SAP BW/4HANA*
-
-* **Architectural Challenge & Solution:** Overview of the decoupled Java 17 ETL agent (`ActiveClientsNumber`) designed to extract and store corporate member metrics for SAP BW/4HANA. 
-* **Solutions & Decoupling Highlights:**
-  * **Timezone-Anchored Reporting Window Resolution:** Handles period calculation using the `Europe/Minsk` timezone (`ACN_App`) to parameterize requests.
-  * **Dual-Layer Jittered Exponential Backoff:** Implements adaptive retry logic with randomized jitter (`RANDOMIZATION_FACTOR = 0.5`) and timeout caps across both pipeline phases:
-    - *API Fetch (`ACN_HttpClient`):* Handles network errors and retryable HTTP statuses (`429`, `500–504`), respecting `Retry-After` headers.
-    - *DB Write (`ACN_DAO`):* Retries batched Hibernate operations (`flush`/`clear` per 50 entities) during SQL outages or deadlocks (`Error 1205`), while failing immediately on constraint violations.
-  * **Auth, TLS & Deduplication:** Supports `basic`, `token`, `oauth2` (with in-memory caching), and `none` auth, dynamic TLS hot-swapping via `CertUpdater`, safe parsing (`ACN_DataDeserializer`), composite-key deduplication (`ACN_PK`), and YAML reporting (`exchange/result.yaml`).
-
-### [6. Dynamic Cryptographic SSL/TLS Trust Store Hot-Swapping System](https://github.com/an-ekimenko/CryptoCertLoader)
+### [4. Dynamic Cryptographic SSL/TLS Trust Store Hot-Swapping System](https://github.com/an-ekimenko/CryptoCertLoader)
 *Target Systems: JVM Security Infrastructure | Distributed Integration Apps*
 * **Architectural Challenge & Solution:** Designed a zero-dependency, pluggable shared-library component automating SSL certificate verification and trust boundaries across neighboring operational modules. It enables enterprise client applications to survive upstream corporate certificate rotations with zero service downtime.
 * **Solutions & Decoupling Highlights:**
