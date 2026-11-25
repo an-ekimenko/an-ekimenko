@@ -6,7 +6,8 @@ Solutions & Integration Architect specializing in fault-tolerant data ecosystems
 
 * **Architectural Governance & Design:** Domain-Driven Modularization (DDD), Separation of Concerns (SoC), Metadata-Driven Extensibility, Fault-Tolerant & Self-Healing Systems, Zero-Downtime Security Lifecycle, NFR Optimization (Throughput, Reliability, Observability).
 * **Integration & Data Engineering:** End-to-End ETL/ELT Pipelines, Multi-Source Ingestion (REST/OAuth2, JDBC, Legacy File Formats), Idempotent Data Processing & Deduplication, Transactional Batching, High-Concurrency Stream Orchestration.
-* **Technology Ecosystem:** Java Enterprise (JDK 17+), Reactive Streams (RxJava 3), Dependency Injection (Google Guice), Resilience Patterns (Exponential Backoff & Jitter, Circuit/Budget Controls), Hibernate / HikariCP, Apache HttpClient 5, Automated QA (JUnit 5, Mockito), Structured Observability & Telemetry.
+* **Technology Ecosystem:** Java Enterprise (JDK 17+), Reactive Streams (RxJava 3), AI & LLM Orchestration (LangChain4j, Ollama Structured Outputs), Dependency Injection (Google Guice), Resilience Patterns (Exponential Backoff & Jitter, Circuit/Budget Controls), Hibernate / HikariCP, Apache HttpClient 5, Automated QA (JUnit 5, Mockito), Structured Observability & Telemetry.
+
 
 ---
 ## 🏗 Selected Enterprise Architectural Solutions
@@ -60,23 +61,34 @@ Solutions & Integration Architect specializing in fault-tolerant data ecosystems
   * **Validity & Unique Metadata Mapping:** Generates deterministic unique aliases based on X500Principal signatures and automatically replaces local certificates failing validation checks, keeping the trust store clean.
   * **Proactive Backup & Rollback Pipeline:** Implements transactional atomicity for filesystem writes. Generates automated, timestamped backups of the master cacerts file before committing updates, triggering immediate rollback sequences upon detecting I/O faults to protect JVM security integrity.
 
+### 5. Deterministic-Guarded AI Master Data Entity Resolution Engine
+
+*Target Systems: 1C ERP Staging | MS SQL Server | Local LLM (Ollama) | SAP BW/4HANA*
+
+* **Architectural Challenge & Solution:** Developed the **LangChain4j_StEntityResolution** service in Java 17 and Google Guice to normalize unstandardized unit strings (`st_Name`) from legacy 1C ERP staging before SAP BW/4HANA ingestion.
+* **Key Architectural Highlights:**
+  * **Non-Destructive Delta-Override Pattern:** Uses an exception-only override table (`GoodsWholesale_AISpaceType`) and persistent cache (`MDM_Unit_Dictionary`), calling the LLM only for new variants.
+  * **Structured Outputs & Deterministic Guardrails:** Enforces deterministic JSON Schema responses (`temperature = 0.0`, `qwen2.5:7b`) via LangChain4j proxies, backed by a `NumericGuardrail` (`\d+(?:[.,]\d+)?`) to separate distinct numeric parameters.
+  * **Resilient Delta Persistence:** Executes `LEFT JOIN` delta lookups and batch upserts via `HibernateBatchExecutor` with exponential backoff, jitter, and automated `exchange/result.yaml` receipts.
+
 ---
 
 ## 📦 Global Artifact Deployment Topology
 
 To maximize operational resource efficiency and maintain a low memory and disk footprint across production hosts, all solutions adopt a strict **Decoupled Shared-Dependency Model**. Heavy third-party framework binaries are entirely stripped from individual runtime modules and dynamically linked via manifest configuration hooks:
 
-```
+```text
 shared-environment-root/
-├── dependencies/               # Centralized, shareable third-party library pool (POI, Guice, Log4j2, etc.)
-├── CryptoCertLoader/           # Dynamic cryptographic TLS validation and context re-initialization library
-├── DataTransformationRxWorkers/# Reactive multi-worker engine handling telemetry stream transformations
-├── GSPassportization/          # High-performance web-API staging engine for gas station assets
-├── ActiveClientsNumber/        # Timezone-aware corporate member telemetry ETL agent with dual-layer retries
-├── RepairRequests/             # Preemptive authentication 1C:TOiR staging area data ingestor
-├── FuelSurchargesCalculation/  # Semicolon-delimited flat CSV retail surcharge aggregator
-├── AdditionalBonus/            # Large file optimization pipeline using formula-driven throttling
-└── PlannedFuelKPI/             # Dynamic Excel context parser utilizing stateful tracking patterns
+├── dependencies/                   # Общий пул сторонних библиотек (POI, Guice, Log4j2, LangChain4j и др.)
+├── CryptoCertLoader/               # Динамическая TLS-валидация и реинициализация контекста
+├── DataTransformationRxWorkers/    # Реактивный движок обработки телеметрии
+├── LangChain4j_StEntityResolution/ # ИИ-сервис сопоставления сущностей (1C -> SAP BW/4HANA)
+├── GSPassportization/              # Web-API движок для данных об объектах АЗС
+├── ActiveClientsNumber/            # ETL-агент телеметрии с поддержкой часовых поясов и повторов
+├── RepairRequests/                 # Сервис сбора данных для 1C:ТОиР
+├── FuelSurchargesCalculation/      # Агрегатор розничных надбавок из CSV
+├── AdditionalBonus/                # Пайплайн оптимизации файлов с троттлингом
+└── PlannedFuelKPI/                 # Парсер Excel с отслеживанием состояния
 ```
 
 ### Operational Component Matrix
@@ -85,7 +97,8 @@ shared-environment-root/
   Centralized shareable library pool (Apache POI, Log4j2, Google Guice, Hibernate, etc.) designed to enforce strict infrastructure decoupling, optimizing memory and disk footprint across the ecosystem.
 * **CryptoCertLoader/**  
   Programmatic TLS Handshake Interceptor Shared Library. Automates dynamic keystore context management and hot-swaps in-memory SSLContext signatures without service restarts.
-- **DataTransformationRxWorkers/** Reactive Multi-Module ETL & Ingestion Engine на базе **RxJava 3** и **Google Guice 7**. Включает универсальный паттерн отказоустойчивости `AbstractResilientWorker` (контроль таймаутов через `System.nanoTime()` и экспоненциальную задержку с джиттером через `ThreadLocalRandom`), защищённые от джиттера окна планирования (`2000 ms`), двухуровневый бпрессур-контроль (`AtomicBoolean`), общий пул соединений **HikariCP** (`SharedInfraModule` + `entities.yaml`), динамическое YAML-обнаружение воркеров (`xn` / `xn <alias>`) и покрытие тестами **JUnit 5 / Mockito**.
+* **DataTransformationRxWorkers/** Reactive Multi-Module ETL & Ingestion Engine на базе **RxJava 3** и **Google Guice 7**. Включает универсальный паттерн отказоустойчивости `AbstractResilientWorker` (контроль таймаутов через `System.nanoTime()` и экспоненциальную задержку с джиттером через `ThreadLocalRandom`), защищённые от джиттера окна планирования (`2000 ms`), двухуровневый бпрессур-контроль (`AtomicBoolean`), общий пул соединений **HikariCP** (`SharedInfraModule` + `entities.yaml`), динамическое YAML-обнаружение воркеров (`xn` / `xn <alias>`) и покрытие тестами **JUnit 5 / Mockito**.
+* **LangChain4j_StEntityResolution/** Deterministic-Guarded AI MDM Entity Resolution Service built on **Java 17**, **LangChain4j**, **Ollama (`qwen2.5:7b`)**, **Google Guice 7**, and **Hibernate 6**. Normalizes unstandardized 1C units of measurement via incremental dictionary caching (`MDM_Unit_Dictionary`), strict JSON Schema structured outputs, regex-based `NumericGuardrail` splitting, idempotent delta-upserts into MS SQL Server, and automated `exchange/result.yaml` execution receipts.
 * **GSPassportization/** High-Performance Gas Station Asset Staging Engine utilizing Google Guice DI, multi-schema authentication (`basic`, `token`, `none`, `oauth2 with caching`), configurable transport timeouts, runtime TLS certificate rotation, defensive JSON parsing, stream deduplication, and automated `exchange/result.yaml` reporting for SAP BW/4HANA.
 * **ActiveClientsNumber/** Timezone-Aware Corporate Member Telemetry ETL Agent utilizing Google Guice 7 DI, multi-schema authentication (`basic`, `token`, `none`, `oauth2` with caching), `Europe/Minsk` reporting period resolution, runtime TLS certificate rotation, dual-layer jittered exponential backoff retries (across both API fetch and MS SQL batch persistence), composite-key deduplication (`ACN_PK`), and automated `exchange/result.yaml` reporting for SAP BW/4HANA.
 * **RepairRequests/**  
@@ -110,6 +123,7 @@ The integration platform is built on standardized architectural contracts that e
 * **Defensive Data Contracts & Idempotency:** Enforces strict schema validation, type-overflow protection, exact decimal arithmetic (`BigDecimal`), and composite-key deduplication at the ingestion boundary—guaranteeing data integrity and safe re-runs before payloads reach analytical warehouses (SAP BW/4HANA).
 * **Shared Runtime Footprint & Environment Agnosticism:** Standardizes dependency management via shared runtime libraries and dynamic execution-context resolution, minimizing memory/disk overhead on host servers while maintaining seamless portability across development, staging, and scheduled production environments.
 * **Unified Observability & Automated Verification:** Standardizes execution telemetry and machine-readable status contracts (`YAML` receipts, exit codes, SQL/wire tracing) for external enterprise schedulers (Control-M, Airflow, SAP PI/PO), backed by isolated unit and behavioral test suites.
+* **Deterministic AI Guardrails & Hybrid Enrichment:** Integrates local LLM inference (`LangChain4j` + `Ollama`) strictly via declarative JSON Schema contracts, incremental dictionary caching, and post-LLM regex guardrails (`NumericGuardrail`), ensuring non-destructive, deterministic entity resolution without mutating volatile ERP staging tables.
 
 ---
 ## 🧪 Enterprise Testing & Verification Frameworks
