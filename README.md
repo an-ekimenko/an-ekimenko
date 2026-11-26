@@ -61,7 +61,7 @@ Solutions & Integration Architect specializing in fault-tolerant data ecosystems
   * **Validity & Unique Metadata Mapping:** Generates deterministic unique aliases based on X500Principal signatures and automatically replaces local certificates failing validation checks, keeping the trust store clean.
   * **Proactive Backup & Rollback Pipeline:** Implements transactional atomicity for filesystem writes. Generates automated, timestamped backups of the master cacerts file before committing updates, triggering immediate rollback sequences upon detecting I/O faults to protect JVM security integrity.
 
-### 5. Deterministic-Guarded AI Master Data Entity Resolution Engine
+### [5. Deterministic-Guarded AI Master Data Entity Resolution Engine](https://github.com/an-ekimenko/LangChain4j_StEntityResolution.git)
 
 *Target Systems: 1C ERP Staging | MS SQL Server | Local LLM (Ollama) | SAP BW/4HANA*
 
