@@ -1,4 +1,4 @@
-# Alex Ekimenko
+# Alexey Ekimenko
 
 **Enterprise Integration Architecture, Resilient Data Pipelines & Distributed System Design.**
 
@@ -23,8 +23,17 @@ Solutions & Integration Architect specializing in fault-tolerant data ecosystems
   * **Shared Infrastructure & CLI:** Centralizes **HikariCP** connections in `SharedInfraModule` (`SessionFactory`), loads JPA entities via `entities.yaml`, and supports dynamic worker discovery through `application.yaml` (`xn` / `xn <alias>`).
   * **Testing (`JUnit 5` & `Mockito`):** Full test suite across 4 Maven modules (`AbstractResilientWorkerTest`, `RxSchedulerMainTest`, `ACN_AppTest`, `FI_AppTest`, custom IO/deserializer tests) utilizing `@TempDir` and static mocks.
 
+### [2. Deterministic-Guarded AI Master Data Entity Resolution Engine](https://github.com/an-ekimenko/LangChain4j_StEntityResolution.git)
+*Target Systems: 1C ERP Staging | MS SQL Server | Local LLM (Ollama) | SAP BW/4HANA*
 
-### 2. Decoupled KPI & Surcharge Analytical Ingestion Pipeline
+- **Architectural Challenge & Solution:** Developed **LangChain4j_StEntityResolution** in Java 17 and Google Guice 7 to standardize unit strings from 1C ERP before SAP BW/4HANA loading.
+* **Key Architectural Highlights:**
+  * **Quarantine & Override Lifecycle:** Utilizes exception and dictionary tables with lifecycle states and key caching to minimize redundant LLM processing.
+  * **Structured Outputs & Guardrails:** Employs deterministic JSON schemas and numeric guardrails via LangChain4j and local models.
+  * **Multi-Stage Validation:** Combines lexical matching (Apache Commons Text) with a secondary AI validation agent.
+  * **Resilient Delta Persistence:** Manages delta lookups, date parsing, and batched persistence with resilience patterns and receipt generation.
+
+### 3. Decoupled KPI & Surcharge Analytical Ingestion Pipeline
 
 *Target Systems: SAP BW Data Bus | Corporate Data Warehouses*
 
@@ -39,7 +48,7 @@ Solutions & Integration Architect specializing in fault-tolerant data ecosystems
   * **Loose Coupling via Abstraction:** Utilized Factory-like dynamic binary signature analysis to completely decouple low-level components from concrete spreadsheet classes. The initialization layer remains unchanged even if future library updates introduce new file extensions, while successfully neutralizing manual human error (improperly renamed files).
   * **Zero-Loss Precision Control:** Enforced arithmetic ledger stability with programmatic ceiling rules via exact `BigDecimal` mapping, preventing scientific exponential notations and multi-million rounding drift within the automated SAP integration bus.
 
-### 3. Resilient REST-to-PSA Enterprise Ingestion Agents Suite
+### 4. Resilient REST-to-PSA Enterprise Ingestion Agents Suite
 *Target Systems: Enterprise REST APIs | Microsoft IIS 10.0 / 1C:TOiR | MS SQL Server Staging (PSA) | SAP BW/4HANA*
 
 - **Shared Architectural Foundation & Capabilities:**
@@ -53,23 +62,13 @@ Solutions & Integration Architect specializing in fault-tolerant data ecosystems
   - [**RepairRequests** *(1C:TOiR Equipment Maintenance & Legacy Gateway Integration)*](https://github.com/an-ekimenko/RepairRequests.git): *`Bypasses proxy drops`* on stateless Microsoft IIS 10.0 *`by forcing preemptive`* BasicAuthCache `credentials`, *`computes annual reporting windows`* (Europe/Minsk), and `filters records` by *`configurable`* equipment classifier codes.
   - [**ActiveClientsNumber** *(Corporate Member Activity & Monthly Metrics Agent*](https://github.com/an-ekimenko/ActiveClientsNumber.git):  Dynamically resolves preceding month boundaries anchored to `Europe/Minsk`, implements `two-step OAuth2 authentication` (token acquisition followed by authenticated data retrieval), and extends `adaptive jittered retry logic to the Hibernate DAO layer` for MS SQL resilience.
 
-### [4. Dynamic Cryptographic SSL/TLS Trust Store Hot-Swapping System](https://github.com/an-ekimenko/CryptoCertLoader)
+### [5. Dynamic Cryptographic SSL/TLS Trust Store Hot-Swapping System](https://github.com/an-ekimenko/CryptoCertLoader)
 *Target Systems: JVM Security Infrastructure | Distributed Integration Apps*
 * **Architectural Challenge & Solution:** Designed a zero-dependency, pluggable shared-library component automating SSL certificate verification and trust boundaries across neighboring operational modules. It enables enterprise client applications to survive upstream corporate certificate rotations with zero service downtime.
 * **Solutions & Decoupling Highlights:**
   * **In-Memory SSLContext Hot-Swapping:** Programmatically intercepts remote certificate chains atomically during secure TLS handshakes using low-overhead discarding body handlers. It updates the physical trust store (cacerts) and dynamically injects the modified SSLContext into active JVM memory on-the-fly, allowing active network clients to leverage fresh certificates instantly without requiring application restarts.
   * **Validity & Unique Metadata Mapping:** Generates deterministic unique aliases based on X500Principal signatures and automatically replaces local certificates failing validation checks, keeping the trust store clean.
   * **Proactive Backup & Rollback Pipeline:** Implements transactional atomicity for filesystem writes. Generates automated, timestamped backups of the master cacerts file before committing updates, triggering immediate rollback sequences upon detecting I/O faults to protect JVM security integrity.
-
-### [5. Deterministic-Guarded AI Master Data Entity Resolution Engine](https://github.com/an-ekimenko/LangChain4j_StEntityResolution.git)
-
-*Target Systems: 1C ERP Staging | MS SQL Server | Local LLM (Ollama) | SAP BW/4HANA*
-
-* **Architectural Challenge & Solution:** Developed the **LangChain4j_StEntityResolution** service in Java 17 and Google Guice to normalize unstandardized unit strings (`st_Name`) from legacy 1C ERP staging before SAP BW/4HANA ingestion.
-* **Key Architectural Highlights:**
-  * **Non-Destructive Delta-Override Pattern:** Uses an exception-only override table (`GoodsWholesale_AISpaceType`) and persistent cache (`MDM_Unit_Dictionary`), calling the LLM only for new variants.
-  * **Structured Outputs & Deterministic Guardrails:** Enforces deterministic JSON Schema responses (`temperature = 0.0`, `qwen2.5:7b`) via LangChain4j proxies, backed by a `NumericGuardrail` (`\d+(?:[.,]\d+)?`) to separate distinct numeric parameters.
-  * **Resilient Delta Persistence:** Executes `LEFT JOIN` delta lookups and batch upserts via `HibernateBatchExecutor` with exponential backoff, jitter, and automated `exchange/result.yaml` receipts.
 
 ---
 
@@ -79,16 +78,16 @@ To maximize operational resource efficiency and maintain a low memory and disk f
 
 ```text
 shared-environment-root/
-├── dependencies/                   # Общий пул сторонних библиотек (POI, Guice, Log4j2, LangChain4j и др.)
-├── CryptoCertLoader/               # Динамическая TLS-валидация и реинициализация контекста
-├── DataTransformationRxWorkers/    # Реактивный движок обработки телеметрии
-├── LangChain4j_StEntityResolution/ # ИИ-сервис сопоставления сущностей (1C -> SAP BW/4HANA)
-├── GSPassportization/              # Web-API движок для данных об объектах АЗС
-├── ActiveClientsNumber/            # ETL-агент телеметрии с поддержкой часовых поясов и повторов
-├── RepairRequests/                 # Сервис сбора данных для 1C:ТОиР
-├── FuelSurchargesCalculation/      # Агрегатор розничных надбавок из CSV
-├── AdditionalBonus/                # Пайплайн оптимизации файлов с троттлингом
-└── PlannedFuelKPI/                 # Парсер Excel с отслеживанием состояния
+├── dependencies/                   # Centralized shareable third-party library pool (POI, Guice, Log4j2, LangChain4j, etc.)
+├── CryptoCertLoader/               # Dynamic TLS certificate validation and SSLContext hot-swapping library
+├── DataTransformationRxWorkers/    # Reactive multi-worker telemetry stream transformation engine
+├── LangChain4j_StEntityResolution/ # Deterministic-guarded AI MDM entity resolution service (1C -> SAP BW/4HANA)
+├── GSPassportization/              # High-performance web-API staging engine for gas station assets
+├── ActiveClientsNumber/            # Timezone-aware corporate member telemetry ETL agent with dual-layer retries
+├── RepairRequests/                 # Preemptive authentication 1C:TOiR staging area data ingestor
+├── FuelSurchargesCalculation/      # Semicolon-delimited flat CSV retail surcharge aggregator
+├── AdditionalBonus/                # Large file optimization pipeline using formula-driven throttling
+└── PlannedFuelKPI/                 # Dynamic Excel context parser utilizing stateful tracking patterns
 ```
 
 ### Operational Component Matrix
@@ -98,7 +97,7 @@ shared-environment-root/
 * **CryptoCertLoader/**  
   Programmatic TLS Handshake Interceptor Shared Library. Automates dynamic keystore context management and hot-swaps in-memory SSLContext signatures without service restarts.
 * **DataTransformationRxWorkers/** Reactive Multi-Module ETL & Ingestion Engine на базе **RxJava 3** и **Google Guice 7**. Включает универсальный паттерн отказоустойчивости `AbstractResilientWorker` (контроль таймаутов через `System.nanoTime()` и экспоненциальную задержку с джиттером через `ThreadLocalRandom`), защищённые от джиттера окна планирования (`2000 ms`), двухуровневый бпрессур-контроль (`AtomicBoolean`), общий пул соединений **HikariCP** (`SharedInfraModule` + `entities.yaml`), динамическое YAML-обнаружение воркеров (`xn` / `xn <alias>`) и покрытие тестами **JUnit 5 / Mockito**.
-* **LangChain4j_StEntityResolution/** Deterministic-Guarded AI MDM Entity Resolution Service built on **Java 17**, **LangChain4j**, **Ollama (`qwen2.5:7b`)**, **Google Guice 7**, and **Hibernate 6**. Normalizes unstandardized 1C units of measurement via incremental dictionary caching (`MDM_Unit_Dictionary`), strict JSON Schema structured outputs, regex-based `NumericGuardrail` splitting, idempotent delta-upserts into MS SQL Server, and automated `exchange/result.yaml` execution receipts.
+* **LangChain4j_StEntityResolution/** Deterministic-Guarded AI MDM Entity Resolution Service built on **Java 17**, **LangChain4j**, **Ollama (`qwen2.5:7b`)**, **Google Guice 7**, and **Hibernate 6**. Normalizes unstandardized 1C units of measurement via incremental dictionary caching with moderation states (`MDM_Unit_Dictionary`), strict JSON Schema structured outputs, composite regex guardrails (`NumericGuardrail`), multi-stage verification combining **Jaro-Winkler** lexical similarity with an **LLM-as-a-Judge** auditor (`UnitVerifierAgent`) and `NEEDS_REVIEW` quarantine routing, idempotent delta-upserts into MS SQL Server, and automated `exchange/result.yaml` execution receipts.
 * **GSPassportization/** High-Performance Gas Station Asset Staging Engine utilizing Google Guice DI, multi-schema authentication (`basic`, `token`, `none`, `oauth2 with caching`), configurable transport timeouts, runtime TLS certificate rotation, defensive JSON parsing, stream deduplication, and automated `exchange/result.yaml` reporting for SAP BW/4HANA.
 * **ActiveClientsNumber/** Timezone-Aware Corporate Member Telemetry ETL Agent utilizing Google Guice 7 DI, multi-schema authentication (`basic`, `token`, `none`, `oauth2` with caching), `Europe/Minsk` reporting period resolution, runtime TLS certificate rotation, dual-layer jittered exponential backoff retries (across both API fetch and MS SQL batch persistence), composite-key deduplication (`ACN_PK`), and automated `exchange/result.yaml` reporting for SAP BW/4HANA.
 * **RepairRequests/**  
